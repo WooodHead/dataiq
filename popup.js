@@ -1,11 +1,14 @@
 function on_click_mode_button(reward_btn, privacy_btn, mode){
     if (mode == "reward"){
         MODE="REWARD"
+        reward_btn.className="btn btn-primary"
+        privacy_btn.className="btn btn-outline-primary"
     } else if(mode == "privacy"){
         MODE="PRIVACY"
+        privacy_btn.className="btn btn-primary"
+        reward_btn.className="btn btn-outline-primary"
     }
-
-
+    
     return null;
     
 }
@@ -17,6 +20,9 @@ MODE="REWARD"
 
 reward_btn.addEventListener("click", function(){
     on_click_mode_button(reward_btn, privacy_btn, "reward")
+})
+privacy_btn.addEventListener("click", function(){
+    on_click_mode_button(reward_btn, privacy_btn, "privacy")
 })
 
 
