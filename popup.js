@@ -18,7 +18,7 @@ function on_click_mode_button(reward_btn, privacy_btn, mode){
         reward_btn.className="btn btn-outline-primary"
         // Call function for privacy mode
         // privacy mode is nothing but ad blocker
-        
+                
 
     }
     
@@ -39,6 +39,5 @@ privacy_btn.addEventListener("click", function(){
 })
 
 
-console.log("DOMContentLoaded")
     
 
