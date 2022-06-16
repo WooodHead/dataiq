@@ -18,7 +18,15 @@
     },
     "options_page":"./options.html",
     "permissions":[
-        "storage", "activeTab", "scripting", "tabs"
-    ]
-
+        "storage", "activeTab", "scripting", "tabs", "declarativeNetRequest"
+    ],
+    "declarative_net_request": {
+        "rule_resources": [
+          {
+            "id": "ruleset_1",
+            "enabled": true,
+            "path": "rules.json"
+          }
+        ]
+      }
 }
