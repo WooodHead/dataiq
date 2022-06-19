@@ -42,6 +42,15 @@ def generate_rules_json_file():
         rule_arr.append(
             make_structure_of_rule(tracker_url, len(rule_arr)+1)
         )
+
+    ADURL_2 = "https://raw.githubusercontent.com/Ewpratten/youtube_ad_blocklist/master/blocklist.txt"
+    r = requests.get(url=ADURL_2)
+    for idx, tracker_url in enumerate(r.text.splitlines()):
+        if not is_ascii(tracker_url):
+            continue
+        rule_arr.append(
+            make_structure_of_rule(tracker_url, len(rule_arr)+1)
+        )
     return rule_arr
 
 
