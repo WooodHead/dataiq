@@ -1,11 +1,8 @@
-function update_mode() {
-    chrome.runtime.sendMessage({"mode": MODE}, response=>{
-        console.log("Response: ", response)
-    })    
+function update_mode(mode) {
+    chrome.runtime.sendMessage({"mode": mode}, response=>{})    
 }
 function on_click_mode_button(reward_btn, privacy_btn, mode){
     if (mode == "reward"){
-        MODE="reward"
         reward_btn.className="btn btn-primary"
         privacy_btn.className="btn btn-outline-primary"
         // Reward mode
@@ -16,7 +13,7 @@ function on_click_mode_button(reward_btn, privacy_btn, mode){
             reward mode: need to call function in content script
             and store use track data in cookies 
         */
-        update_mode()
+        update_mode("reward")
 
         
     } else if(mode == "privacy"){
@@ -25,7 +22,7 @@ function on_click_mode_button(reward_btn, privacy_btn, mode){
         reward_btn.className="btn btn-outline-primary"
         // Call function for privacy mode
         // privacy mode is nothing but ad blocker
-        update_mode()
+        
                 
 
     }
@@ -37,7 +34,7 @@ function on_click_mode_button(reward_btn, privacy_btn, mode){
 reward_btn=document.getElementById("reward-btn")
 privacy_btn=document.getElementById("privacy-btn")
 
-let MODE="reward"
+
 
 reward_btn.addEventListener("click", function(){
     on_click_mode_button(reward_btn, privacy_btn, "reward")
@@ -45,7 +42,11 @@ reward_btn.addEventListener("click", function(){
 privacy_btn.addEventListener("click", function(){
     on_click_mode_button(reward_btn, privacy_btn, "privacy")
 })
-
+chrome.storag.sync.get(["mode"], function(mode_dict){
+    if(!mode_dict["mode"]){
+        update_mode("reward")
+    }
+})
 
     
 
