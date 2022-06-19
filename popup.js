@@ -33,8 +33,13 @@ function on_click_mode_button(reward_btn, privacy_btn, mode){
 
 reward_btn=document.getElementById("reward-btn")
 privacy_btn=document.getElementById("privacy-btn")
-
-
+get_google_search_btn=document.getElementById("get-google-search")
+get_google_search_btn.addEventListener("click", function (){
+    console.log("get_google_search_btn")
+    chrome.storage.sync.get(["search_term_array"], function(result) {
+        alert(JSON.stringify(result))
+    })
+})
 
 reward_btn.addEventListener("click", function(){
     on_click_mode_button(reward_btn, privacy_btn, "reward")
@@ -42,7 +47,7 @@ reward_btn.addEventListener("click", function(){
 privacy_btn.addEventListener("click", function(){
     on_click_mode_button(reward_btn, privacy_btn, "privacy")
 })
-chrome.storag.sync.get(["mode"], function(mode_dict){
+chrome.storage.sync.get(["mode"], function(mode_dict){
     if(!mode_dict["mode"]){
         update_mode("reward")
     }

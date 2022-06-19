@@ -22,17 +22,22 @@ function store_data(key, value, is_array){
         
     } else {
         chrome.storage.sync.get([key], function(result) {
-            if(result.key){
-                arr = result.key
-                if(Array.isArray(arr)) {
+            if (result[key]) {
+                arr = result[key]
+                if (Array.isArray(arr)) {
                     arr.push(value)
-                    chrome.storage.sync.set({key: arr}, function() {
+                    let obj_to_save = {}
+                    obj_to_save[key] = arr
+                    chrome.storage.sync.set(obj_to_save, function (resp) {
                         // if there is an error then throw an error
                         throw_last_chrome_error();
                     });
                 }
             } else {
-                chrome.storage.sync.set({key: [value]}, function() {
+                let obj_to_save = {}
+                obj_to_save[key] = [value]
+                console.log("first time saving, ", JSON.stringify(obj_to_save))
+                chrome.storage.sync.set(obj_to_save, function () {
                     // if there is an error then throw an error
                     throw_last_chrome_error();
                 });
