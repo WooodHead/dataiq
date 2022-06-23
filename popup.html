@@ -11,13 +11,26 @@
   </head>
   <body>
     <div class="row mt-2">
+      <div class="col">
+        <button class="btn btn-link" id="btn-preferences">Preferences</button>
+      </div>
+    </div>
+    <div class="row mt-2">
       <div class="col-4 text-center">
         <h2 class="text-primary">Data IQ</h2>
       </div>
       <div class="col-8 text-center">
         <div class="btn-group" role="group">
-            <button type="button" class="btn btn-primary" id="reward-btn">Reward</button>
-            <button type="button" class="btn btn-outline-primary" id="privacy-btn">Privacy</button>
+          <button type="button" class="btn btn-primary" id="reward-btn">
+            Reward
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-primary"
+            id="privacy-btn"
+          >
+            Privacy
+          </button>
         </div>
       </div>
     </div>
@@ -32,14 +45,24 @@
     <div class="row shadow-sm p-3 mb-5 bg-white rounded">
       <div class="col">
         <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked>
-          <label class="form-check-label" for="flexSwitchCheckChecked">Enable Data IQ on this site</label>
+          <input
+            class="form-check-input"
+            type="checkbox"
+            role="switch"
+            id="flexSwitchCheckChecked"
+            checked
+          />
+          <label class="form-check-label" for="flexSwitchCheckChecked"
+            >Enable Data IQ on this site</label
+          >
         </div>
       </div>
     </div>
     <div class="row">
       <div class="col">
-        <button class="btn btn-danger" id="get-google-search">get google search</button>
+        <button class="btn btn-danger" id="get-google-search">
+          get google search
+        </button>
       </div>
     </div>
     <script src="./popup.js"></script>

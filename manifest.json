@@ -3,6 +3,7 @@
     "description":"right now nothing",
     "version":"0.1.0",
     "manifest_version":3,
+    "incognito":"split",
     "icons":{
 
     },
