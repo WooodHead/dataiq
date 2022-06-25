@@ -39,13 +39,24 @@ reward_btn=document.getElementById("reward-btn")
 privacy_btn=document.getElementById("privacy-btn")
 get_google_search_btn=document.getElementById("get-google-search")
 preferences_btn=document.getElementById("btn-preferences")
-console.log("preferences_btn ", preferences_btn)
+show_points_btn=document.getElementById("btn-show-points")
+
+show_points_btn.addEventListener("click", function(){
+    // search_term_array
+    chrome.storage.sync.get(["search_term_array"], function(resp){
+        search_term_array = resp["search_term_array"]
+        points =   search_term_array ? Math.round(search_term_array.length / 100) : 0
+        document.getElementById("point-span").innerText = points
+    })
+})
 preferences_btn.addEventListener("click", function(){
     on_click_preferences()
 })
 get_google_search_btn.addEventListener("click", function (){
-    console.log("get_google_search_btn")
-    chrome.storage.sync.get(["search_term_array"], function(result) {
+    // chrome.storage.sync.get(["search_term_array"], function(result) {
+    //     alert(JSON.stringify(result))
+    // })
+    chrome.storage.sync.get(["visited_href"], function(result) {
         alert(JSON.stringify(result))
     })
 })
