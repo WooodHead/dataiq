@@ -12,8 +12,12 @@ function throw_last_chrome_error(){
     }
     return true;
 }
-function store_data(key, value, is_array){
-    if(!is_array){
+function save_data_in_database(user_data) {
+    console.log(user_data)
+}
+function store_data(key, value, is_array) {
+    console.log("-- store_data --");
+    if(!is_array) {
         mode_dict={}
         mode_dict[key]=value
         chrome.storage.sync.set(mode_dict,function(){
@@ -21,6 +25,7 @@ function store_data(key, value, is_array){
         });
         
     } else {
+        let user_data = []
         chrome.storage.sync.get([key], function(result) {
             if (result[key]) {
                 arr = result[key]
@@ -32,17 +37,23 @@ function store_data(key, value, is_array){
                         // if there is an error then throw an error
                         throw_last_chrome_error();
                     });
+                    user_data = arr;
                 }
             } else {
                 let obj_to_save = {}
                 obj_to_save[key] = [value]
-                console.log("first time saving, ", JSON.stringify(obj_to_save))
                 chrome.storage.sync.set(obj_to_save, function () {
                     // if there is an error then throw an error
                     throw_last_chrome_error();
                 });
+                user_data = [value]
             }
+            if(user_data && user_data >= 20) {
+                save_data_in_database(user_data)    
+            }            
         });
+
+        
     }
     
 

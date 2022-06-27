@@ -36,12 +36,14 @@ function on_click_preferences(){
     return;
 }
 function toggle_enable_dataiq_button(){
+    /*
     enable_dataiq_button_flag = MODE == "reward" ? true : false;
     if(enable_dataiq_button_flag) {
         enable_dataIQ.className = button_classname_and_state_mapping["enable_dataiq_button"]["active"]
     } else if (!enable_dataiq_button_flag) {
         enable_dataIQ.className = button_classname_and_state_mapping["enable_dataiq_button"]["deactive"]
     }
+    */
 }
 MODE = "reward";
 let reward_btn=document.getElementById("reward-btn")
@@ -91,7 +93,9 @@ privacy_btn.addEventListener("click", function(){
     toggle_enable_dataiq_button()
 })
 enable_dataIQ.addEventListener("click", function(){
-    toggle_enable_dataiq_button()
+    enable_dataiq_button_flag = !enable_dataiq_button_flag
+    enable_dataIQ.className = enable_dataiq_button_flag ? button_classname_and_state_mapping["enable_dataiq_button"]["active"] :button_classname_and_state_mapping["enable_dataiq_button"]["deactive"] 
+    // toggle_enable_dataiq_button()
 })
 
 chrome.storage.sync.get(["mode"], function(mode_dict){
