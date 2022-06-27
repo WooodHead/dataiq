@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Popup | Data IQ</title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css" />
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        let reward_btn = document.getElementById("btn-reward");
+        let privacy_btn = document.getElementById("btn-privacy");
+        let mode = "reward";
+        reward_btn.addEventListener("click", function () {
+          mode = "reward";
+          privacy_btn.className = "btn btn-outline-primary btn-md";
+          reward_btn.className = "btn btn-outline-primary btn-md active";
+          console.log("mode: ", mode);
+        });
+        privacy_btn.addEventListener("click", function () {
+          mode = "privacy";
+          console.log("mode: ", mode);
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div class="row mt-5">
+      <div class="col">
+        <h1 class="text-primary">Data IQ</h1>
+      </div>
+      <div class="col">
+        <div class="btn-group btn-group-toggle">
+          <button class="btn btn-outline-primary btn-md active" id="btn-reward">
+            Reward
+          </button>
+          <button class="btn btn-outline-primary btn-md" id="btn-privacy">
+            Privacy
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-5">
+      <div class="col"></div>
+      <div class="col">
+        <button type="button" class="btn btn-outline-primary btn-lg btn-block">
+          Enable Data IQ on this site
+        </button>
+      </div>
+      <div class="col"></div>
+    </div>
+  </body>
+</html>

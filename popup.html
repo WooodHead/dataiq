@@ -8,13 +8,20 @@
     <!-- CSS only -->
     <link href="./css/bootstrap.min.css" rel="stylesheet" />
     <link href="./css/style.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Open Sans"
+    />
+    <!-- <link rel="stylesheet" href="./css/fontawesome.min.css" /> -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+      integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
   </head>
   <body>
-    <div class="row mt-2">
-      <div class="col">
-        <button class="btn btn-link" id="btn-preferences">Preferences</button>
-      </div>
-    </div>
     <div class="row mt-2">
       <div class="col-4 text-center">
         <h2 class="text-primary">Data IQ</h2>
@@ -34,37 +41,42 @@
         </div>
       </div>
     </div>
-    <div class="row mt-2 shadow-sm p-3 mb-5 bg-white rounded">
-      <div class="col-4 text-center">
-        <p class="h2 text-primary">$1234</p>
-      </div>
-      <div class="col-8 text-end">
-        <p class="h2 text-primary">Points</p>
+    <hr />
+    <div class="row text-center mt-2">
+      <div class="col">
+        <h2 class="text-primary">Points: 1234</h2>
       </div>
     </div>
-    <div class="row shadow-sm p-3 mb-5 bg-white rounded">
+    <hr />
+    <div class="row mt-2 text-center">
       <div class="col">
-        <div class="form-check form-switch">
-          <input
-            class="form-check-input"
-            type="checkbox"
-            role="switch"
-            id="flexSwitchCheckChecked"
-            checked
-          />
-          <label class="form-check-label" for="flexSwitchCheckChecked"
-            >Enable Data IQ on this site</label
-          >
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <button class="btn btn-danger" id="get-google-search">
-          get google search
+        <button
+          type="button"
+          class="btn btn-primary btn-lg btn-block"
+          id="btn-enable-dataiq"
+        >
+          Enable Data IQ on this site
         </button>
       </div>
     </div>
+    <hr />
+    <div class="row mt-2 text-center">
+      <div class="row">
+        <div class="col">
+          <button class="btn btn-primary">
+            <i class="fa fa-cog" aria-hidden="true"></i>
+            Preferences
+          </button>
+        </div>
+        <div class="col">
+          <button class="btn btn-primary">
+            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+            Marketplace
+          </button>
+        </div>
+      </div>
+    </div>
+    <hr />
     <script src="./popup.js"></script>
   </body>
 </html>

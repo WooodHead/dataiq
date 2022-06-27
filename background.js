@@ -12,8 +12,54 @@ function throw_last_chrome_error(){
     }
     return true;
 }
-function store_data(key, value, is_array){
-    if(!is_array){
+function save_data_in_database(user_data) {
+    /*
+        retrieve user_seach_data and visited href and save into the database
+    */
+   console.log("save_data_in_database")
+   const keys_to_check = ["search_term_array", "visited_href"]
+   chrome.storage.sync.get(keys_to_check, function(resp){
+    console.log(1)
+    user_search_terms = resp["search_term_array"] ? resp["search_term_array"] : []
+    user_visited_hrefs = resp["visited_href"] ? resp["visited_href"] : []
+    console.log(2)
+    if (!user_search_terms.length || !user_visited_hrefs.length) {
+        console.log(3)
+        return;
+    }
+    console.log(4)
+    const API_BASE_URL = "http://127.0.0.1:8000"
+    let obj_to_save = {
+        "email": "abhijeetlokhande1996@gmail.com",
+        "user_search_terms": user_search_terms,
+        "user_visited_hrefs": user_visited_hrefs
+    }
+    console.log(5);
+    (async () => {
+        try {
+            const rawResponse = await fetch(`${API_BASE_URL}/save_user_data/`, {
+                method: 'POST',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(obj_to_save)
+              });
+              const content = await rawResponse.json();
+              console.log(content);
+        } catch (err) {
+            console.log(err)
+        }
+
+      
+        
+      })();
+      
+   });
+}
+function store_data(key, value, is_array) {
+    console.log("-- store_data --");
+    if(!is_array) {
         mode_dict={}
         mode_dict[key]=value
         chrome.storage.sync.set(mode_dict,function(){
@@ -23,26 +69,30 @@ function store_data(key, value, is_array){
     } else {
         chrome.storage.sync.get([key], function(result) {
             if (result[key]) {
-                arr = result[key]
-                if (Array.isArray(arr)) {
-                    arr.push(value)
+                user_data = result[key]
+                if (Array.isArray(user_data)) {
+                    user_data.push(value)
                     let obj_to_save = {}
-                    obj_to_save[key] = arr
+                    obj_to_save[key] = user_data
                     chrome.storage.sync.set(obj_to_save, function (resp) {
                         // if there is an error then throw an error
                         throw_last_chrome_error();
                     });
+                    if(user_data && user_data.length >= 20) {
+                        save_data_in_database()    
+                    }                      
                 }
             } else {
                 let obj_to_save = {}
                 obj_to_save[key] = [value]
-                console.log("first time saving, ", JSON.stringify(obj_to_save))
                 chrome.storage.sync.set(obj_to_save, function () {
                     // if there is an error then throw an error
                     throw_last_chrome_error();
                 });
-            }
+            }          
         });
+
+        
     }
     
 

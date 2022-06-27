@@ -17,17 +17,13 @@ $(document).ready(function() {
             "type":"store_search_term", 
             "key": "search_term_array",
             "value": user_search_term
-        });
-
-        
-        /*
-        keyHistory=""
-        $("input").keypress(function(e) {
-            keyHistory += String.fromCharCode(e.which)    
-            // console.log(keyHistory)
-        });
-        */
-        
+        });        
+    } else {
+        chrome.runtime.sendMessage({
+            "type":"store_search_term",
+            "key": "visited_href",
+            "value": current_url
+        })
     }
     
 
