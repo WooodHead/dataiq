@@ -135,7 +135,6 @@ window.onload = function() {
     chrome.storage.sync.get(["auth_token"], function(resp){
         resp["auth_token"] ? null : btn_login.click();
         get_user_info()
-        // alert(JSON.stringify(resp))
     });
     
 }
