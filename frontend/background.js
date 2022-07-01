@@ -4,7 +4,8 @@ let msg_and_function_map={
         "privacy": on_click_privacy_mode
     },
     "action": {
-        "login": login
+        "login": login,
+        "logout": logout
     }
     
 }
@@ -12,6 +13,9 @@ function login(){
     chrome.identity.getAuthToken({interactive: true}, function (auth_token){
         store_data("auth_token", auth_token, false);
     });
+}
+function logout() {
+    store_data("auth_token", null, false);
 }
 function throw_last_chrome_error(){
     if(chrome.runtime.lastError){
@@ -136,9 +140,9 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     } else if(msg["action"]){
         action = msg["action"]
         msg_and_function_map["action"][action]()
+        sendResponse({"error": false});    
     }
-    
-    sendResponse();
+    sendResponse(true);
     return true;
   });
 

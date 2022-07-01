@@ -51,6 +51,7 @@ let privacy_btn=document.getElementById("privacy-btn")
 let get_google_search_btn=document.getElementById("get-google-search")
 let enable_dataIQ = document.getElementById("btn-enable-dataiq");
 let btn_login = document.getElementById("btn-login")
+let btn_logout = document.getElementById("btn-logout")
 let enable_dataiq_button_flag = null;
 let button_classname_and_state_mapping = {
     "enable_dataiq_button": {
@@ -77,10 +78,25 @@ enable_dataIQ.addEventListener("click", function(){
 btn_login.addEventListener("click", function(){
     login();
 })
+btn_logout.addEventListener("click", logout)
 
 
 function login() {
     chrome.runtime.sendMessage({"action": "login"}, response=>{})
+    get_user_info();
+}
+function logout() {
+    chrome.runtime.sendMessage({"action": "logout"}, response=>{
+        if(chrome.runtime.lastError){
+            alert("Error")
+        } else {
+            if(!response["error"]) {
+                document.getElementById("email_id_p").innerText = "";
+                btn_login.style = "block";
+            }
+        }
+        
+    })
 }
 function get_user_info() {
     chrome.identity.getProfileUserInfo({accountStatus: "ANY"}, function(user_info){
@@ -119,6 +135,7 @@ window.onload = function() {
     chrome.storage.sync.get(["auth_token"], function(resp){
         resp["auth_token"] ? null : btn_login.click();
         get_user_info()
+        // alert(JSON.stringify(resp))
     });
     
 }
