@@ -1,3 +1,5 @@
+
+
 let msg_and_function_map={
     "mode":{
         "reward": on_click_reward_mode,
@@ -9,13 +11,20 @@ let msg_and_function_map={
     }
     
 }
-function login(){
+function login(callback=null){  
     chrome.identity.getAuthToken({interactive: true}, function (auth_token){
         store_data("auth_token", auth_token, false);
+        if(callback) {
+            callback();
+        }
+        return true;
     });
 }
-function logout() {
+function logout(callback=null) {
     store_data("auth_token", null, false);
+    if(callback) {
+        callback();
+    }
 }
 function throw_last_chrome_error(){
     if(chrome.runtime.lastError){
@@ -138,13 +147,25 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         }
 
     } else if(msg["action"]){
-        action = msg["action"]
-        msg_and_function_map["action"][action]()
-        sendResponse({"error": false});    
+        let action = msg["action"]
+        function callback_func() {
+            chrome.storage.sync.get("auth_token", function(resp){
+                let err_flag_to_send = false;
+                if(action=="login") {
+                    err_flag_to_send = resp["auth_token"] ? false : true;
+                } else if(action=="logout") {
+                    err_flag_to_send = !resp["auth_token"] ? false : true;
+                }
+                sendResponse({"error": err_flag_to_send}); 
+            })
+        }
+        msg_and_function_map["action"][action](callback_func)
+        /*
+        
+        */
     }
-    sendResponse(true);
     return true;
-  });
+});
 
 
 

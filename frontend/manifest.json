@@ -8,18 +8,14 @@
 
     },
     "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApOAbZYPcQPDarclsMoTgm2dxZbXixIFPEVctLMdyfuoG2xkSvwoHsyQa3F9W6nYxBrUDtYs6oWRpRN8sTHKGXAvtEMTGlNWWYjwD6EuhAk3HhoRM6vuwRy8IOm/tC47anEN1Y4YmVlLQJavYBncxdoCaf21TFPC5p252cDSfeEz/OuafGLxQ4semqOeINMapasOsDCC062DWxpvTo8VMvIKg6ej7OKWkXaUkQwCS4acygQjdFXNd+zUHeLwlEBB3qVsH3YkdS5pS7Clq/6dW0nGNi9t3/gdHaO4i+3ebIHx7znlW3+MW4NLXUjx+mA+OdVgrTcvFnvgjYw4ufBVCmwIDAQAB",
-    "oauth2":{
-      "client_id":"265085908520-3u4qkp2qr9pk7h6mhau4abu2rdad5qt6.apps.googleusercontent.com",
-      "scopes":[
-        "openid profile email",
-        "https://www.googleapis.com/auth/contacts",
-        "https://www.googleapis.com/auth/userinfo.email"
-      ]
 
-    },
     "background":{
         "service_worker":"background.js"
 
+    },
+    "oauth2": {
+      "client_id":"265085908520-3u4qkp2qr9pk7h6mhau4abu2rdad5qt6.apps.googleusercontent.com",
+      "scopes": ["openid", "email", "profile"]
     },
     "action":{
         "default_popup":"./popup.html",

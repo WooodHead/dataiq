@@ -60,33 +60,21 @@ let button_classname_and_state_mapping = {
     }
 }
 
-
-reward_btn.addEventListener("click", function(){
-    on_click_mode_button(reward_btn, privacy_btn, "reward")
-    toggle_enable_dataiq_button()
-    
-})
-privacy_btn.addEventListener("click", function(){
-    on_click_mode_button(reward_btn, privacy_btn, "privacy")
-    toggle_enable_dataiq_button()
-})
-enable_dataIQ.addEventListener("click", function(){
-    enable_dataiq_button_flag = !enable_dataiq_button_flag
-    enable_dataIQ.className = enable_dataiq_button_flag ? button_classname_and_state_mapping["enable_dataiq_button"]["active"] :button_classname_and_state_mapping["enable_dataiq_button"]["deactive"] 
-    // toggle_enable_dataiq_button()
-});
-btn_login.addEventListener("click", function(){
-    login();
-})
-btn_logout.addEventListener("click", logout)
-
-
 function login() {
-    chrome.runtime.sendMessage({"action": "login"}, response=>{})
-    get_user_info();
+    chrome.runtime.sendMessage({"action": "login"}, response=>{
+        console.log("-- ", response)
+        if("error" in response) {
+          if(!response["error"]){
+            get_user_info()
+          }else {
+            alert("Login Failed")
+          }
+        } 
+    })
 }
 function logout() {
     chrome.runtime.sendMessage({"action": "logout"}, response=>{
+        console.log("logout", response)
         if(chrome.runtime.lastError){
             alert("Error")
         } else {
@@ -113,6 +101,27 @@ function get_user_info() {
         
     });
 }
+reward_btn.addEventListener("click", function(){
+    on_click_mode_button(reward_btn, privacy_btn, "reward")
+    toggle_enable_dataiq_button()
+    
+})
+privacy_btn.addEventListener("click", function(){
+    on_click_mode_button(reward_btn, privacy_btn, "privacy")
+    toggle_enable_dataiq_button()
+})
+enable_dataIQ.addEventListener("click", function(){
+    enable_dataiq_button_flag = !enable_dataiq_button_flag
+    enable_dataIQ.className = enable_dataiq_button_flag ? button_classname_and_state_mapping["enable_dataiq_button"]["active"] :button_classname_and_state_mapping["enable_dataiq_button"]["deactive"] 
+    // toggle_enable_dataiq_button()
+});
+btn_login.addEventListener("click", function(){
+    login();
+})
+btn_logout.addEventListener("click", logout)
+
+
+
 window.onload = function() {
     chrome.storage.sync.get(["mode"], function(mode_dict){
         mode_dict = mode_dict =! null ? mode_dict : {}
@@ -133,8 +142,7 @@ window.onload = function() {
     })
     
     chrome.storage.sync.get(["auth_token"], function(resp){
-        resp["auth_token"] ? null : btn_login.click();
-        get_user_info()
+        resp["auth_token"] ? get_user_info() : btn_login.click();
     });
     
 }
