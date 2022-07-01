@@ -2,8 +2,16 @@ let msg_and_function_map={
     "mode":{
         "reward": on_click_reward_mode,
         "privacy": on_click_privacy_mode
+    },
+    "action": {
+        "login": login
     }
     
+}
+function login(){
+    chrome.identity.getAuthToken({interactive: true}, function (auth_token){
+        store_data("auth_token", auth_token, false);
+    });
 }
 function throw_last_chrome_error(){
     if(chrome.runtime.lastError){
@@ -34,7 +42,6 @@ function save_data_in_database(user_data) {
         "user_search_terms": user_search_terms,
         "user_visited_hrefs": user_visited_hrefs
     }
-    console.log(5);
     (async () => {
         try {
             const rawResponse = await fetch(`${API_BASE_URL}/save_user_data/`, {
@@ -58,7 +65,6 @@ function save_data_in_database(user_data) {
    });
 }
 function store_data(key, value, is_array) {
-    console.log("-- store_data --");
     if(!is_array) {
         mode_dict={}
         mode_dict[key]=value
@@ -127,6 +133,9 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
             store_data(msg["key"], msg["value"], true)
         }
 
+    } else if(msg["action"]){
+        action = msg["action"]
+        msg_and_function_map["action"][action]()
     }
     
     sendResponse();
