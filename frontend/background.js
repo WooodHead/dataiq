@@ -1,5 +1,3 @@
-
-
 let msg_and_function_map={
     "mode":{
         "reward": on_click_reward_mode,
@@ -11,17 +9,44 @@ let msg_and_function_map={
     }
     
 }
-function login(callback=null){  
-    chrome.identity.getAuthToken({interactive: true}, function (auth_token){
-        store_data("auth_token", auth_token, false);
-        if(callback) {
-            callback();
-        }
-        return true;
-    });
+
+function login(callback=null){
+    let manifest = chrome.runtime.getManifest();
+    let clientId = manifest.oauth2.client_id;
+    let redirectUri = `https://${chrome.runtime.id}.chromiumapp.org/`;
+    let nonce = Math.random().toString(36).substring(2, 15);
+    const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
+    authUrl.searchParams.set('client_id', clientId);
+    authUrl.searchParams.set('response_type', 'id_token');
+    authUrl.searchParams.set('redirect_uri', redirectUri);
+    authUrl.searchParams.set('scope', 'openid profile email');
+    authUrl.searchParams.set('nonce', nonce);
+    authUrl.searchParams.set('prompt', 'consent');
+    chrome.identity.launchWebAuthFlow(
+        {
+            url: authUrl.href,
+            interactive: true,
+        }, (redirect_url)=>{
+            if(redirect_url){
+                const urlHash = redirect_url.split('#')[1];
+                const params = new URLSearchParams(urlHash);
+                const jwt = params.get('id_token');
+                const base64Url = jwt.split('.')[1];
+                const base64 = base64Url.replace('-', '+').replace('_', '/');
+                const token_obj = JSON.parse(atob(base64));
+                const cond = nonce == token_obj["nonce"] && (token_obj["iss"] == "https://accounts.google.com" || token_obj["iss"] == "accounts.google.com") && (token_obj["aud"] == clientId)
+                if(cond){
+                    const name = token_obj["name"] ? token_obj["name"]: null;
+                    store_data("name", name, false);
+                    store_data("auth_token", true, false);
+                }
+                callback();
+            }
+        });    
 }
 function logout(callback=null) {
-    store_data("auth_token", null, false);
+    store_data("auth_token", false, false);
+    store_data("name", null, false);
     if(callback) {
         callback();
     }

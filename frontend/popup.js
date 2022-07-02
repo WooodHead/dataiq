@@ -61,20 +61,18 @@ let button_classname_and_state_mapping = {
 }
 
 function login() {
-    chrome.runtime.sendMessage({"action": "login"}, response=>{
-        console.log("-- ", response)
+    chrome.runtime.sendMessage({"action": "login"}, (response)=>{
         if("error" in response) {
-          if(!response["error"]){
-            get_user_info()
-          }else {
-            alert("Login Failed")
-          }
+            if(!response["error"]){
+                get_user_info();
+            }else {
+                alert("Login Failed");
+            }
         } 
-    })
+    });
 }
 function logout() {
     chrome.runtime.sendMessage({"action": "logout"}, response=>{
-        console.log("logout", response)
         if(chrome.runtime.lastError){
             alert("Error")
         } else {
@@ -87,6 +85,18 @@ function logout() {
     })
 }
 function get_user_info() {
+    chrome.storage.sync.get(["name"], function(resp){
+        const  name = resp["name"]; 
+        if (name){
+            document.getElementById("email_id_p").innerText = name;
+            btn_login.removeEventListener("click", login);
+            btn_login.style.display="none";
+        } else {
+            btn_login.style.display="block";
+            btn_login.addEventListener("click", login);
+        }
+        
+    });
     chrome.identity.getProfileUserInfo({accountStatus: "ANY"}, function(user_info){
         email = user_info["email"]
         if (email){
@@ -143,6 +153,7 @@ window.onload = function() {
     
     chrome.storage.sync.get(["auth_token"], function(resp){
         resp["auth_token"] ? get_user_info() : btn_login.click();
+        
     });
     
 }
