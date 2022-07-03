@@ -120,7 +120,7 @@ function calc_points() {
         let points=0;
         points = resp["search_term_array"] ? resp["search_term_array"].length : 0; 
         points += resp["visited_href"] ? resp["visited_href"].length : 0; 
-        points /= 2;
+        points /= 100;
         update_points_in_html(points);
     });
 }
