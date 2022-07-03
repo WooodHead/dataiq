@@ -150,12 +150,11 @@ window.onload = function() {
             ;
         }
     })
-    
+    /*
     chrome.storage.sync.get(["auth_token"], function(resp){
         resp["auth_token"] ? get_user_info() : btn_login.click();
-        
     });
-    
+    */
 }
 
 
