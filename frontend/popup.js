@@ -32,7 +32,7 @@ function on_click_mode_button(reward_btn, privacy_btn, mode){
     
 }
 function on_click_preferences(){
-    window.open("https://www.google.com/")
+    window.open("https://www.google.com/");
     return;
 }
 function toggle_enable_dataiq_button(){
@@ -111,6 +111,19 @@ function get_user_info() {
         
     });
 }
+function calc_points() {
+    function update_points_in_html(points) {
+        console.log(" -- update_points_in_html", points);
+        document.getElementById("points_h2").innerText = `Points: ${Math.round(points)}`;
+    }
+    chrome.storage.sync.get(['search_term_array', 'visited_href'], function(resp){
+        let points=0;
+        points = resp["search_term_array"] ? resp["search_term_array"].length : 0; 
+        points += resp["visited_href"] ? resp["visited_href"].length : 0; 
+        points /= 2;
+        update_points_in_html(points);
+    });
+}
 reward_btn.addEventListener("click", function(){
     on_click_mode_button(reward_btn, privacy_btn, "reward")
     toggle_enable_dataiq_button()
@@ -149,7 +162,8 @@ window.onload = function() {
         } else{
             ;
         }
-    })
+    });
+    calc_points();
     /*
     chrome.storage.sync.get(["auth_token"], function(resp){
         resp["auth_token"] ? get_user_info() : btn_login.click();
