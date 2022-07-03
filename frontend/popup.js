@@ -113,7 +113,6 @@ function get_user_info() {
 }
 function calc_points() {
     function update_points_in_html(points) {
-        console.log(" -- update_points_in_html", points);
         document.getElementById("points_h2").innerText = `Points: ${Math.round(points)}`;
     }
     chrome.storage.sync.get(['search_term_array', 'visited_href'], function(resp){
