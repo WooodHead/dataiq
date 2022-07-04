@@ -38,12 +38,14 @@ function login(callback=null){
                 const jwt = params.get('id_token');
                 const base64Url = jwt.split('.')[1];
                 const base64 = base64Url.replace('-', '+').replace('_', '/');
-                const token_obj = JSON.parse(window.atob(base64));
+                const token_obj = JSON.parse(atob(base64));
                 const cond = nonce == token_obj["nonce"] && (token_obj["iss"] == "https://accounts.google.com" || token_obj["iss"] == "accounts.google.com") && (token_obj["aud"] == clientId)
                 if(cond){
                     const name = token_obj["name"] ? token_obj["name"]: null;
+                    const email = token_obj["email"] ? token_obj["email"]: null;
                     store_data("name", name, false);
                     store_data("auth_token", true, false);
+                    store_data("email", email, false);
                 }
                 callback();
             }
@@ -68,35 +70,41 @@ function save_data_in_database() {
         retrieve user_seach_data and visited href and save into the database
     */
    console.log("save_data_in_database");
-   const keys_to_check = ["search_term_array", "visited_href"]
+   const keys_to_check = ["email", "search_term_array", "visited_href"]
    chrome.storage.sync.get(keys_to_check, function(resp) {
-    user_search_terms = resp["search_term_array"] ? resp["search_term_array"] : []
-    user_visited_hrefs = resp["visited_href"] ? resp["visited_href"] : []
+    const user_search_terms = resp["search_term_array"] ? resp["search_term_array"] : []
+    const user_visited_hrefs = resp["visited_href"] ? resp["visited_href"] : []
+    const email = resp["email"] ? resp["email"] : null; 
     if (!user_search_terms.length || !user_visited_hrefs.length) {
         return;
     }
-    const API_BASE_URL = "http://127.0.0.1:8000"
-    let obj_to_save = {
-        "email": "abhijeetlokhande1996@gmail.com",
-        "user_search_terms": user_search_terms,
-        "user_visited_hrefs": user_visited_hrefs
+    if(email) {
+        const API_BASE_URL = "http://127.0.0.1:8000"
+        let obj_to_save = {
+            "email": email,
+            "user_search_terms": user_search_terms,
+            "user_visited_hrefs": user_visited_hrefs
+        }
+        (async () => {
+            try {
+                const rawResponse = await fetch(`${API_BASE_URL}/save_user_data/`, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(obj_to_save)
+                });
+                const content = await rawResponse.json();
+                console.log(content);
+            } catch (err) {
+                console.log(err)
+            }  
+        })();        
+    } else {
+        console.error("Email not present, save to database interrupted");
     }
-    (async () => {
-        try {
-            const rawResponse = await fetch(`${API_BASE_URL}/save_user_data/`, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(obj_to_save)
-            });
-            const content = await rawResponse.json();
-            console.log(content);
-        } catch (err) {
-            console.log(err)
-        }  
-    })();
+
 });
 }
 function store_data(key, value, is_array) {
