@@ -130,7 +130,12 @@ function on_click_marketplace(){
 document.getElementById("btn-show-data").addEventListener("click", function(){
     chrome.storage.sync.get(["email", "search_term_array", 
     "visited_href"], function(resp){
-        console.log(resp);
+        let obj_to_show = {
+            "email": email,
+            "search_term_array_len": resp["search_term_array"].length,
+            "visited_href_len": resp["visited_href"].length
+        }
+        alert(JSON.stringify(obj_to_show));
     })
 });
 reward_btn.addEventListener("click", function(){
