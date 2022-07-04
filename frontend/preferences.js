@@ -88,4 +88,38 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("btn-save-preferences").addEventListener("click", function(){
         update_pref_setting_in_db(pref_text_state_mapping);
     });
+
+    document.getElementById("btn-save-details").addEventListener("click", function(){
+        let age_range = document.getElementById("age_range_dropdown").value;
+        let dob = document.getElementById("date-birth").value;
+        let profession = document.getElementById("profession_dropdown").value;
+        let gender = document.getElementById("gender_dropdown").value;
+        const cond = age_range || dob || profession || gender;
+        if(!cond) {
+            console.error("at least one field in personal details should present");
+            return
+        }
+        
+        const obj_to_save = {
+            "age_range": !age_range || age_range=="null" ?  null: age_range,
+            "dob": !dob || dob=="null" ?  null: dob,
+            "profession": !profession || profession=="null" ? null: profession,
+            "gender": !gender || gender=="null" ?  null: gender
+        };
+        (async () => {
+            const rawResponse = await fetch(`${API_BASE_URL}/save_user_data/`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "email": "abhijeetlokhande1996@gmail.com",
+                    "personal_details": obj_to_save
+                })
+            });
+            const content = await rawResponse.json();
+            console.log(content);
+        })();        
+    });
 });
