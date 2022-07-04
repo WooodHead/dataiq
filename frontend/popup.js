@@ -89,6 +89,7 @@ function get_user_info() {
     chrome.storage.sync.get(["name"], function(resp){
         const  name = resp["name"]; 
         if (name){
+            console.log("name ", name);
             document.getElementById("email_id_p").innerText = name;
             btn_login.removeEventListener("click", login);
             btn_login.style.display="none";
@@ -124,6 +125,13 @@ function calc_points() {
         update_points_in_html(points);
     });
 }
+
+document.getElementById("btn-show-data").addEventListener("click", function(){
+    chrome.storage.sync.get(["email", "search_term_array", 
+    "visited_href"], function(resp){
+        console.log(resp);
+    })
+});
 reward_btn.addEventListener("click", function(){
     on_click_mode_button(reward_btn, privacy_btn, "reward")
     toggle_enable_dataiq_button()

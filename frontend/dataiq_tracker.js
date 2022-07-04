@@ -25,12 +25,11 @@ $(document).ready(function() {
             "value": current_url
         })
     }
-    $("body").append(`
-        <div>
-            <p>Data IQ Advertisement</p>
-        </div>
-    `);
-    console.log("")
+    let ads = `<div style="height:50px;; width:100%;">
+        <p>Data IQ Advertisement</p>
+    </div>`;
+    $("body").prepend(ads);
+    
 
 });
 

@@ -11,7 +11,7 @@ let msg_and_function_map={
     
 }
 function clean_up_data_from_local_storage() {
-    store_data("store_search_term", [], false);
+    store_data("search_term_array", [], false);
     store_data("visited_href", [], false);
     console.log("clean_up_data_from_local_storage done!!")
 }
