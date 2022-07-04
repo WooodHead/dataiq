@@ -164,8 +164,9 @@ window.onload = function() {
         }
     });
     chrome.storage.sync.get(["auth_token"], function(resp){
-        resp["auth_token"] ? get_user_info() : btn_login.click();
-        calc_points();
+        resp["auth_token"] ? function(){
+            get_user_info(); calc_points();
+        }() : btn_login.click();
     });
     
 }
