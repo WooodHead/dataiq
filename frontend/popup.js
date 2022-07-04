@@ -1,5 +1,5 @@
 function update_mode(mode) {
-    chrome.runtime.sendMessage({"mode": mode}, response=>{})    
+    chrome.runtime.sendMessage({"mode": mode}, response=>{});    
 }
 function on_click_mode_button(reward_btn, privacy_btn, mode){
     if (mode == "reward"){
@@ -142,7 +142,9 @@ btn_login.addEventListener("click", function(){
     login();
 })
 btn_logout.addEventListener("click", logout)
-
+document.getElementById("btn-clean-up-data").addEventListener("click", function(){
+    chrome.runtime.sendMessage({"action": "clean-up-data"}, response=>{});
+})
 
 
 window.onload = function() {

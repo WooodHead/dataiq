@@ -5,11 +5,16 @@ let msg_and_function_map={
     },
     "action": {
         "login": login,
-        "logout": logout
+        "logout": logout,
+        "clean-up-data": clean_up_data_from_local_storage
     }
     
 }
-
+function clean_up_data_from_local_storage() {
+    store_data("store_search_term", [], false);
+    store_data("visited_href", [], false);
+    console.log("clean_up_data_from_local_storage done!!")
+}
 function login(callback=null){
     let manifest = chrome.runtime.getManifest();
     let clientId = manifest.oauth2.client_id;
