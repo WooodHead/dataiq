@@ -38,7 +38,7 @@ function login(callback=null){
                 const jwt = params.get('id_token');
                 const base64Url = jwt.split('.')[1];
                 const base64 = base64Url.replace('-', '+').replace('_', '/');
-                const token_obj = JSON.parse(atob(base64));
+                const token_obj = JSON.parse(window.atob(base64));
                 const cond = nonce == token_obj["nonce"] && (token_obj["iss"] == "https://accounts.google.com" || token_obj["iss"] == "accounts.google.com") && (token_obj["aud"] == clientId)
                 if(cond){
                     const name = token_obj["name"] ? token_obj["name"]: null;
@@ -63,13 +63,13 @@ function throw_last_chrome_error(){
     }
     return true;
 }
-function save_data_in_database(user_data) {
+function save_data_in_database() {
     /*
         retrieve user_seach_data and visited href and save into the database
     */
-   console.log("save_data_in_database")
+   console.log("save_data_in_database");
    const keys_to_check = ["search_term_array", "visited_href"]
-   chrome.storage.sync.get(keys_to_check, function(resp){
+   chrome.storage.sync.get(keys_to_check, function(resp) {
     user_search_terms = resp["search_term_array"] ? resp["search_term_array"] : []
     user_visited_hrefs = resp["visited_href"] ? resp["visited_href"] : []
     if (!user_search_terms.length || !user_visited_hrefs.length) {
@@ -86,22 +86,18 @@ function save_data_in_database(user_data) {
             const rawResponse = await fetch(`${API_BASE_URL}/save_user_data/`, {
                 method: 'POST',
                 headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json'
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(obj_to_save)
-              });
-              const content = await rawResponse.json();
-              console.log(content);
+            });
+            const content = await rawResponse.json();
+            console.log(content);
         } catch (err) {
             console.log(err)
-        }
-
-      
-        
-      })();
-      
-   });
+        }  
+    })();
+});
 }
 function store_data(key, value, is_array) {
     if(!is_array) {
