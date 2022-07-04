@@ -89,7 +89,6 @@ function get_user_info() {
     chrome.storage.sync.get(["name"], function(resp){
         const  name = resp["name"]; 
         if (name){
-            console.log("name ", name);
             document.getElementById("email_id_p").innerText = name;
             btn_login.removeEventListener("click", login);
             btn_login.style.display="none";
