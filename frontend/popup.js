@@ -62,6 +62,7 @@ let button_classname_and_state_mapping = {
 
 function login() {
     chrome.runtime.sendMessage({"action": "login"}, (response)=>{
+        
         if("error" in response) {
             if(!response["error"]){
                 get_user_info();
@@ -162,12 +163,11 @@ window.onload = function() {
             ;
         }
     });
-    calc_points();
-    /*
     chrome.storage.sync.get(["auth_token"], function(resp){
         resp["auth_token"] ? get_user_info() : btn_login.click();
+        calc_points();
     });
-    */
+    
 }
 
 
