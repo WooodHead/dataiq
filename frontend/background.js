@@ -65,15 +65,11 @@ function save_data_in_database(user_data) {
    console.log("save_data_in_database")
    const keys_to_check = ["search_term_array", "visited_href"]
    chrome.storage.sync.get(keys_to_check, function(resp){
-    console.log(1)
     user_search_terms = resp["search_term_array"] ? resp["search_term_array"] : []
     user_visited_hrefs = resp["visited_href"] ? resp["visited_href"] : []
-    console.log(2)
     if (!user_search_terms.length || !user_visited_hrefs.length) {
-        console.log(3)
         return;
     }
-    console.log(4)
     const API_BASE_URL = "http://127.0.0.1:8000"
     let obj_to_save = {
         "email": "abhijeetlokhande1996@gmail.com",
@@ -123,7 +119,7 @@ function store_data(key, value, is_array) {
                         throw_last_chrome_error();
                     });
                     if(user_data && user_data.length >= 20) {
-                        save_data_in_database()    
+                        save_data_in_database();    
                     }                      
                 }
             } else {

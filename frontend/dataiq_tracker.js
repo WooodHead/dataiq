@@ -25,7 +25,12 @@ $(document).ready(function() {
             "value": current_url
         })
     }
-    
+    $("body").append(`
+        <div>
+            <p>Data IQ Advertisement</p>
+        </div>
+    `);
+    console.log("")
 
 });
 
