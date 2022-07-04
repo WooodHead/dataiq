@@ -1,4 +1,23 @@
 document.addEventListener("DOMContentLoaded", function () {
+    const API_BASE_URL = "http://127.0.0.1:8000";
+    function update_pref_setting_in_db(pref_text_state_mapping){
+        (async () => {
+            const rawResponse = await fetch(`${API_BASE_URL}/save_user_data/`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "email": "abhijeetlokhande1996@gmail.com",
+                    "preferences": pref_text_state_mapping
+                })
+            });
+            const content = await rawResponse.json();
+            console.log(content);
+        })();
+        
+    }
     function on_click_pref_text(id, pref_text_state_mapping){
         // bg-primary text-white
         pref_text_state_mapping[id] = !pref_text_state_mapping[id];
@@ -67,6 +86,6 @@ document.addEventListener("DOMContentLoaded", function () {
     </div>`);
 
     document.getElementById("btn-save-preferences").addEventListener("click", function(){
-        console.log(pref_text_state_mapping);
+        update_pref_setting_in_db(pref_text_state_mapping);
     });
 });
