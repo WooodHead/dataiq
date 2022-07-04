@@ -31,10 +31,7 @@ function on_click_mode_button(reward_btn, privacy_btn, mode){
     return null;
     
 }
-function on_click_preferences(){
-    window.open("https://www.google.com/");
-    return;
-}
+
 function toggle_enable_dataiq_button(){
     /*
     enable_dataiq_button_flag = MODE == "reward" ? true : false;
@@ -124,7 +121,12 @@ function calc_points() {
         update_points_in_html(points);
     });
 }
-
+function on_click_preferences(){
+    window.open("./preferences.html");
+}
+function on_click_marketplace(){
+    window.open("./market_place.html");
+}
 document.getElementById("btn-show-data").addEventListener("click", function(){
     chrome.storage.sync.get(["email", "search_term_array", 
     "visited_href"], function(resp){
@@ -148,7 +150,9 @@ enable_dataIQ.addEventListener("click", function(){
 btn_login.addEventListener("click", function(){
     login();
 })
-btn_logout.addEventListener("click", logout)
+btn_logout.addEventListener("click", logout);
+document.getElementById("btn-preferences").addEventListener("click", on_click_preferences);
+document.getElementById("btn-marketplace").addEventListener("click", on_click_marketplace);
 document.getElementById("btn-clean-up-data").addEventListener("click", function(){
     chrome.runtime.sendMessage({"action": "clean-up-data"}, response=>{});
 })
