@@ -6,14 +6,7 @@ function on_click_mode_button(reward_btn, privacy_btn, mode){
         MODE = "reward"
         reward_btn.className="btn btn-primary"
         privacy_btn.className="btn btn-outline-primary"
-        // Reward mode
-        // track all user activity and store it in the 
-        // database, what to track and what not to track 
-        // is yet to be decide
-        /* 
-            reward mode: need to call function in content script
-            and store use track data in cookies 
-        */
+        document.getElementById("points_row").style.display="block";
         update_mode("reward")
 
         
@@ -21,8 +14,7 @@ function on_click_mode_button(reward_btn, privacy_btn, mode){
         MODE = "privacy"
         privacy_btn.className="btn btn-primary"
         reward_btn.className="btn btn-outline-primary"
-        // Call function for privacy mode
-        // privacy mode is nothing but ad blocker
+        document.getElementById("points_row").style.display="none";
         update_mode("privacy")
                 
 
