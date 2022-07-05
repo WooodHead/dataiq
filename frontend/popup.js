@@ -55,6 +55,7 @@ function login() {
         if("error" in response) {
             if(!response["error"]){
                 get_user_info();
+                calc_points();
             }else {
                 alert("Login Failed");
             }
@@ -104,6 +105,7 @@ function get_user_info() {
 function calc_points() {
     function update_points_in_html(points) {
         document.getElementById("points_h2").innerText = `Points: ${Math.round(points)}`;
+        document.getElementById("points_h2").style.display="block"
     }
     chrome.storage.sync.get(['search_term_array', 'visited_href'], function(resp){
         let points=0;
@@ -164,7 +166,7 @@ window.onload = function() {
         if(mode_dict["mode"]=="reward") {
             enable_dataiq_button_flag = true;
             enable_dataIQ.className = button_classname_and_state_mapping["enable_dataiq_button"]["active"]
-            on_click_mode_button(reward_btn, privacy_btn, "active")
+            on_click_mode_button(reward_btn, privacy_btn, "reward")
         } else if (mode_dict["mode"] == "privacy") {
             enable_dataiq_button_flag = false;       
             enable_dataIQ.className = button_classname_and_state_mapping["enable_dataiq_button"]["deactive"]
