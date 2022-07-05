@@ -25,7 +25,7 @@
     "options_page":"./options.html",
     "permissions":[
         "storage", "activeTab", "scripting", "tabs", "declarativeNetRequest",
-        "identity","identity.email", "http://*/*", "https://*/*"
+        "identity","identity.email"
 
     ],
     "content_scripts": [
