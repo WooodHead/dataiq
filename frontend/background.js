@@ -85,7 +85,7 @@ function save_data_in_database() {
             "email": email,
             "user_search_terms": user_search_terms,
             "user_visited_hrefs": user_visited_hrefs
-        }
+        };
         (async () => {
             try {
                 const rawResponse = await fetch(`${API_BASE_URL}/save_user_data/`, {
@@ -130,6 +130,7 @@ function store_data(key, value, is_array) {
                     });
                     if(user_data && user_data.length >= 20) {
                         save_data_in_database();    
+                        clean_up_data_from_local_storage();
                     }                      
                 }
             } else {

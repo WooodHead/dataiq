@@ -1,11 +1,35 @@
 from typing import Union
 from fastapi import FastAPI, Request
+from starlette.config import Config
+from starlette.requests import Request
+from starlette.middleware.sessions import SessionMiddleware
+from starlette.responses import HTMLResponse, RedirectResponse
+from authlib.integrations.starlette_client import OAuth, OAuthError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+from fastapi import Response
+from fastapi.responses import JSONResponse
+from urllib.parse import urlparse
+
+
+import json
 import uvicorn
 
 from db_conns import MongoDb
 
 app = FastAPI()
+app.add_middleware(SessionMiddleware, secret_key="!secret")
+config = Config('.env')
+oauth = OAuth(config)
+CONF_URL = 'https://accounts.google.com/.well-known/openid-configuration'
+oauth.register(
+    name='google',
+    server_metadata_url=CONF_URL,
+    client_kwargs={
+        'scope': 'openid email profile'
+    }
+)
+
 origins = ["*"]
 
 app.add_middleware(
@@ -27,6 +51,52 @@ async def on_shutdown():
     client = startup_vars.get("db", None)
     if client:
         client.close()
+
+@app.get('/')
+def index(request: Request):
+    html_content = """
+    <html>
+        <head>
+            <title>Some HTML in here</title>
+        </head>
+        <body>
+            <h1>Welcome DataIQ</h1>
+        </body>
+    </html>
+    """
+    content = {"message": "Come to the dark side, we have cookies"}
+    return content    
+
+
+@app.get('/login')
+async def login(request: Request):
+    redirect_uri = request.url_for('auth')
+    resp = await oauth.google.authorize_redirect(request, redirect_uri)
+    acc_token = request.session['user'].get("access_token")
+    resp.set_cookie(key="access_token", value=acc_token, domain="127.0.0.1")
+    del request.session['user']
+    return resp
+    
+
+
+@app.get('/auth')
+async def auth(request: Request, response: Response):
+    try:
+        token = await oauth.google.authorize_access_token(request)
+    except OAuthError as error:
+        return HTMLResponse(f'<h1>{error.error}</h1>')
+    user = token.get('userinfo')
+    user["access_token"] = token.get("access_token")
+    if user:
+        request.session['user'] = dict(user)
+    return RedirectResponse(url='/')
+    
+
+
+@app.get('/logout')
+async def logout(request: Request):
+    request.session.pop('user', None)
+    return RedirectResponse(url='/')
 
 @app.post("/save_user_data/")
 async def save_user_data(request: Request):
@@ -52,6 +122,9 @@ async def save_user_data(request: Request):
     return {
         "error": False
     }
+
+
+
 if __name__ == "__main__":
     uvicorn.run("main:app", host='127.0.0.1', port=8000, reload=True)
 
