@@ -40,6 +40,7 @@ function login(callback=null){
                 const base64 = base64Url.replace('-', '+').replace('_', '/');
                 const token_obj = JSON.parse(atob(base64));
                 const cond = nonce == token_obj["nonce"] && (token_obj["iss"] == "https://accounts.google.com" || token_obj["iss"] == "accounts.google.com") && (token_obj["aud"] == clientId)
+                console.log("token obj ", token_obj);
                 if(cond){
                     const name = token_obj["name"] ? token_obj["name"]: null;
                     const email = token_obj["email"] ? token_obj["email"]: null;
