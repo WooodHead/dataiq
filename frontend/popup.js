@@ -1,3 +1,18 @@
+let MODE = "reward";
+let reward_btn=document.getElementById("reward-btn")
+let privacy_btn=document.getElementById("privacy-btn")
+let get_google_search_btn=document.getElementById("get-google-search")
+let enable_dataIQ = document.getElementById("btn-enable-dataiq");
+let btn_login = document.getElementById("btn-login")
+let btn_logout = document.getElementById("btn-logout")
+let enable_dataiq_button_flag = null;
+let button_classname_and_state_mapping = {
+    "enable_dataiq_button": {
+        "active": "btn btn-primary btn-lg btn-block",
+        "deactive": "btn btn-warning btn-lg btn-block"
+    }
+}
+const API_BASE_URL = "http://127.0.0.1:8000"
 function update_mode(mode) {
     chrome.runtime.sendMessage({"mode": mode}, response=>{});    
 }
@@ -34,23 +49,10 @@ function toggle_enable_dataiq_button(){
     }
     */
 }
-MODE = "reward";
-let reward_btn=document.getElementById("reward-btn")
-let privacy_btn=document.getElementById("privacy-btn")
-let get_google_search_btn=document.getElementById("get-google-search")
-let enable_dataIQ = document.getElementById("btn-enable-dataiq");
-let btn_login = document.getElementById("btn-login")
-let btn_logout = document.getElementById("btn-logout")
-let enable_dataiq_button_flag = null;
-let button_classname_and_state_mapping = {
-    "enable_dataiq_button": {
-        "active": "btn btn-primary btn-lg btn-block",
-        "deactive": "btn btn-warning btn-lg btn-block"
-    }
-}
-
 function login() {
-    chrome.runtime.sendMessage({"action": "login"}, (response)=>{
+    window.open(API_BASE_URL);
+    
+/*    chrome.runtime.sendMessage({"action": "login"}, (response)=>{
         
         if("error" in response) {
             if(!response["error"]){
@@ -60,7 +62,7 @@ function login() {
                 alert("Login Failed");
             }
         } 
-    });
+    }); */
 }
 function logout() {
     chrome.runtime.sendMessage({"action": "logout"}, response=>{

@@ -11,6 +11,7 @@ from fastapi import Response
 from fastapi.responses import JSONResponse
 from urllib.parse import urlparse
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 
 
 import json
@@ -22,6 +23,9 @@ templates = Jinja2Templates(directory="./templates")
 
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key="!secret")
+app.mount("/js", StaticFiles(directory="./templates/js/"), name="js")
+
+
 config = Config()
 oauth = OAuth(config)
 CONF_URL = 'https://accounts.google.com/.well-known/openid-configuration'
@@ -57,7 +61,15 @@ async def on_shutdown():
 
 @app.get('/')
 def index(request: Request):
-    return templates.TemplateResponse("index.html", context={"request": request, "name":"Abhijeet"})
+    context_dict = {
+        "request": request,
+    }
+    user = request.session.get("user", None)
+    if user:
+        name = user.get("name")
+        context_dict["name"] = name.upper() if name else None
+        
+    return templates.TemplateResponse("index.html", context=context_dict)
 
 
 
@@ -66,12 +78,6 @@ async def login(request: Request):
     redirect_uri = request.url_for('auth')
     resp = await oauth.google.authorize_redirect(request, redirect_uri)
     acc_token = request.session.get("user", {}).get("access_token")
-    # resp.set_cookie(key="access_token", value=acc_token, domain="127.0.0.1")
-    # STORE IN REDIS EMAIL AND ACCESS TOKEN
-    # FRONTEND --> GET USER
-    # EMAIL ID : REDIS TOKEN
-
-
     return resp
     
 
