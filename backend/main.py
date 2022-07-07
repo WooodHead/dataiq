@@ -18,6 +18,12 @@ import json
 import uvicorn
 from os import getenv
 from db_conns import MongoDb
+from fastapi import FastAPI, Body, Depends
+from models import UserSchema, UserLoginSchema
+from auth.auth_bearer import JWTBearer
+from auth.auth_handler import signJWT
+from urllib.parse import urlparse
+
 
 templates = Jinja2Templates(directory="./templates")
 
@@ -66,9 +72,8 @@ def index(request: Request):
     }
     user = request.session.get("user", None)
     if user:
-        name = user.get("name")
+        name = user.get("given_name")
         context_dict["name"] = name.upper() if name else None
-        
     return templates.TemplateResponse("index.html", context=context_dict)
 
 
@@ -77,7 +82,23 @@ def index(request: Request):
 async def login(request: Request):
     redirect_uri = request.url_for('auth')
     resp = await oauth.google.authorize_redirect(request, redirect_uri)
-    acc_token = request.session.get("user", {}).get("access_token")
+    # acc_token = request.session.get("user", {}).get("access_token")
+    user = request.session.get("user", None)
+    if user:
+        email = user.pop("email")
+        db = startup_vars.get("db", None)
+        if not db:
+            # TODO: implement logger mechanism
+            print(colored("Mongo Client not initialized", "red"))
+        else: 
+            if not db.check_record_exists(email, collection_name = "user_data"):
+                operation_flag = db.update_record(
+                    data = {
+                        "email": email,
+                        "info": user
+                        }, collection_name = "user_data")
+        if email:
+            resp.set_cookie(key="access_token", value=signJWT(email), domain=request.client.host)
     return resp
     
 
@@ -89,7 +110,7 @@ async def auth(request: Request, response: Response):
     except OAuthError as error:
         return HTMLResponse(f'<h1>{error.error}</h1>')
     user = token.get('userinfo')
-    user["access_token"] = token.get("access_token")
+    # user["access_token"] = token.get("access_token")
     if user:
         request.session['user'] = dict(user)
     return RedirectResponse(url='/')
@@ -101,7 +122,7 @@ async def logout(request: Request):
     request.session.pop('user', None)
     return RedirectResponse(url='/')
 
-@app.post("/save_user_data/")
+@app.post("/save_user_data", dependencies=[Depends(JWTBearer())])
 async def save_user_data(request: Request):
     user_data = await request.json()
     if not isinstance(user_data, dict) or not user_data.get("email", None):
