@@ -10,16 +10,19 @@ from fastapi.responses import HTMLResponse
 from fastapi import Response
 from fastapi.responses import JSONResponse
 from urllib.parse import urlparse
+from fastapi.templating import Jinja2Templates
 
 
 import json
 import uvicorn
-
+from os import getenv
 from db_conns import MongoDb
+
+templates = Jinja2Templates(directory="./templates")
 
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key="!secret")
-config = Config('.env')
+config = Config()
 oauth = OAuth(config)
 CONF_URL = 'https://accounts.google.com/.well-known/openid-configuration'
 oauth.register(
@@ -54,27 +57,21 @@ async def on_shutdown():
 
 @app.get('/')
 def index(request: Request):
-    html_content = """
-    <html>
-        <head>
-            <title>Some HTML in here</title>
-        </head>
-        <body>
-            <h1>Welcome DataIQ</h1>
-        </body>
-    </html>
-    """
-    content = {"message": "Come to the dark side, we have cookies"}
-    return content    
+    return templates.TemplateResponse("index.html", context={"request": request, "name":"Abhijeet"})
+
 
 
 @app.get('/login')
 async def login(request: Request):
     redirect_uri = request.url_for('auth')
     resp = await oauth.google.authorize_redirect(request, redirect_uri)
-    acc_token = request.session['user'].get("access_token")
-    resp.set_cookie(key="access_token", value=acc_token, domain="127.0.0.1")
-    del request.session['user']
+    acc_token = request.session.get("user", {}).get("access_token")
+    # resp.set_cookie(key="access_token", value=acc_token, domain="127.0.0.1")
+    # STORE IN REDIS EMAIL AND ACCESS TOKEN
+    # FRONTEND --> GET USER
+    # EMAIL ID : REDIS TOKEN
+
+
     return resp
     
 
