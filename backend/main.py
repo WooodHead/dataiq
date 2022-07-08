@@ -74,7 +74,8 @@ def index(request: Request):
         context_dict["name"] = name.upper() if name else None
     else:
         # else part means use is logout
-        resp.set_cookie(key="access_token", value=None,domain=request.client.host)
+        resp.set_cookie(key="access_token", value=None,
+                        domain=request.client.host)
     return templates.TemplateResponse("index.html", context=context_dict)
 
 
@@ -98,11 +99,12 @@ async def login(request: Request):
                         "info": user
                     }, collection_name="user_data")
         if email:
-            print("request.client.host ", request.client.host, "email ", email)
             acc_token = signJWT(email).get("access_token", None)
             if acc_token:
-                resp.set_cookie(key="access_token", value=signJWT(
-                    email), domain=request.client.host)
+                resp.set_cookie(key="access_token", value=acc_token,
+                                domain=request.client.host)
+                name = user.get("given_name", None)
+                resp.set_cookie(key="name", value=name, domain=request.client.host)
 
     return resp
 

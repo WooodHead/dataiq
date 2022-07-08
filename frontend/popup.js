@@ -1,3 +1,4 @@
+const DOMAIN = "http://127.0.0.1";
 let MODE = "reward";
 let reward_btn=document.getElementById("reward-btn")
 let privacy_btn=document.getElementById("privacy-btn")
@@ -51,18 +52,6 @@ function toggle_enable_dataiq_button(){
 }
 function login() {
     window.open(API_BASE_URL);
-    
-/*    chrome.runtime.sendMessage({"action": "login"}, (response)=>{
-        
-        if("error" in response) {
-            if(!response["error"]){
-                get_user_info();
-                calc_points();
-            }else {
-                alert("Login Failed");
-            }
-        } 
-    }); */
 }
 function logout() {
     chrome.runtime.sendMessage({"action": "logout"}, response=>{
@@ -80,6 +69,7 @@ function logout() {
 function get_user_info() {
     chrome.storage.sync.get(["name"], function(resp){
         const  name = resp["name"]; 
+        console.log("NAME ", name);
         if (name){
             document.getElementById("email_id_p").innerText = name;
             btn_login.removeEventListener("click", login);
@@ -88,19 +78,6 @@ function get_user_info() {
             btn_login.style.display="block";
             btn_login.addEventListener("click", login);
         }
-        
-    });
-    chrome.identity.getProfileUserInfo({accountStatus: "ANY"}, function(user_info){
-        email = user_info["email"]
-        if (email){
-            document.getElementById("email_id_p").innerText = email;
-            btn_login.removeEventListener("click", login);
-            btn_login.style.display="none";
-        } else {
-            btn_login.style.display="block";
-            btn_login.addEventListener("click", login);
-        }
-        
         
     });
 }
@@ -177,11 +154,20 @@ window.onload = function() {
             ;
         }
     });
-    chrome.storage.sync.get(["auth_token"], function(resp){
-        resp["auth_token"] ? function(){
-            get_user_info(); calc_points();
-        }() : btn_login.click();
-    });
+    chrome.cookies.get(
+        {
+            "url": "http://127.0.0.1:8000/",
+            "name": "access_token"
+        }, function(cookie){
+            if(cookie) {
+                access_token = cookie.value;
+                get_user_info(); 
+                calc_points();
+            }
+            
+        });    
+
+
     
 }
 

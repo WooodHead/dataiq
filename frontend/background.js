@@ -16,7 +16,8 @@ function clean_up_data_from_local_storage() {
     console.log("clean_up_data_from_local_storage done!!")
 }
 function login(callback=null){
-    let manifest = chrome.runtime.getManifest();
+    
+    /* let manifest = chrome.runtime.getManifest();
     let clientId = manifest.oauth2.client_id;
     let redirectUri = `https://${chrome.runtime.id}.chromiumapp.org/`;
     let nonce = Math.random().toString(36).substring(2, 15);
@@ -50,7 +51,7 @@ function login(callback=null){
                 }
                 callback();
             }
-        });    
+        }); */
 }
 function logout(callback=null) {
     store_data("auth_token", false, false);
