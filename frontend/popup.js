@@ -1,4 +1,4 @@
-const DOMAIN = "http://127.0.0.1";
+const API_BASE_URL = "http://127.0.0.1:8000"
 let MODE = "reward";
 let reward_btn=document.getElementById("reward-btn")
 let privacy_btn=document.getElementById("privacy-btn")
@@ -13,7 +13,7 @@ let button_classname_and_state_mapping = {
         "deactive": "btn btn-warning btn-lg btn-block"
     }
 }
-const API_BASE_URL = "http://127.0.0.1:8000"
+
 function update_mode(mode) {
     chrome.runtime.sendMessage({"mode": mode}, response=>{});    
 }
@@ -67,19 +67,23 @@ function logout() {
     })
 }
 function get_user_info() {
-    chrome.storage.sync.get(["name"], function(resp){
-        const  name = resp["name"]; 
-        console.log("NAME ", name);
-        if (name){
-            document.getElementById("email_id_p").innerText = name;
-            btn_login.removeEventListener("click", login);
-            btn_login.style.display="none";
-        } else {
-            btn_login.style.display="block";
-            btn_login.addEventListener("click", login);
-        }
-        
-    });
+    chrome.cookies.get(
+        {
+            "url": API_BASE_URL,
+            "name": "name"
+        }, function(cookie){
+            if(cookie) {
+                const name = cookie.value;
+                document.getElementById("email_id_p").innerText = name;
+                btn_login.removeEventListener("click", login);
+                btn_login.style.display="none";                
+            } else {
+                btn_login.style.display="block";
+                document.getElementById("email_id_p").innerText = null;
+                btn_login.addEventListener("click", login);
+            }
+            
+        });    
 }
 function calc_points() {
     function update_points_in_html(points) {
@@ -104,7 +108,7 @@ document.getElementById("btn-show-data").addEventListener("click", function(){
     chrome.storage.sync.get(["email", "search_term_array", 
     "visited_href"], function(resp){
         let obj_to_show = {
-            "email": email,
+            "email": resp["email"],
             "search_term_array_len": resp["search_term_array"].length,
             "visited_href_len": resp["visited_href"].length
         }
@@ -156,7 +160,7 @@ window.onload = function() {
     });
     chrome.cookies.get(
         {
-            "url": "http://127.0.0.1:8000/",
+            "url": API_BASE_URL,
             "name": "access_token"
         }, function(cookie){
             if(cookie) {
