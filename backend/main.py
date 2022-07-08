@@ -51,6 +51,20 @@ oauth.register(
 startup_vars = {}
 
 
+def set_unset_cookies(resp, set_flag, user):
+    if set_flag:
+        resp.set_cookie(key="access_token", value=acc_token,
+                        domain=request.client.host)
+        name = user.get("given_name", None)
+        resp.set_cookie(key="name", value=name, domain=request.client.host)
+        resp.set_cookie(key="email", value=email, domain=request.client.host)
+    else:
+        resp.set_cookie(key="access_token", value=None,
+                        domain=request.client.host)
+        resp.set_cookie(key="name", value=None, domain=request.client.host)
+        resp.set_cookie(key="email", value=None, domain=request.client.host)
+
+
 @app.on_event("startup")
 async def on_startup():
     startup_vars["db"] = MongoDb()
@@ -73,9 +87,7 @@ def index(request: Request):
         name = user.get("given_name")
         context_dict["name"] = name.upper() if name else None
     else:
-        # else part means use is logout
-        resp.set_cookie(key="access_token", value=None,
-                        domain=request.client.host)
+        set_unset_cookies(resp=resp, set_flag=False, user=None)
     return templates.TemplateResponse("index.html", context=context_dict)
 
 
@@ -101,10 +113,7 @@ async def login(request: Request):
         if email:
             acc_token = signJWT(email).get("access_token", None)
             if acc_token:
-                resp.set_cookie(key="access_token", value=acc_token,
-                                domain=request.client.host)
-                name = user.get("given_name", None)
-                resp.set_cookie(key="name", value=name, domain=request.client.host)
+                set_unset_cookies(resp=resp, set_flag=True, user=user)
 
     return resp
 
