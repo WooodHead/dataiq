@@ -51,7 +51,7 @@ oauth.register(
 startup_vars = {}
 
 
-def set_unset_cookies(resp, set_flag, user):
+def set_unset_cookies(resp, set_flag, acc_token=None, user=None):
     if set_flag:
         resp.set_cookie(key="access_token", value=acc_token,
                         domain=request.client.host)
@@ -87,7 +87,7 @@ def index(request: Request):
         name = user.get("given_name")
         context_dict["name"] = name.upper() if name else None
     else:
-        set_unset_cookies(resp=resp, set_flag=False, user=None)
+        set_unset_cookies(resp=resp, set_flag=False, acc_token=None, user=None)
     return templates.TemplateResponse("index.html", context=context_dict)
 
 
@@ -113,7 +113,8 @@ async def login(request: Request):
         if email:
             acc_token = signJWT(email).get("access_token", None)
             if acc_token:
-                set_unset_cookies(resp=resp, set_flag=True, user=user)
+                set_unset_cookies(resp=resp, set_flag=True,
+                                  acc_token=acc_token, user=user)
 
     return resp
 
