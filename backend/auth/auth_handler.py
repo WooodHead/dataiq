@@ -1,7 +1,6 @@
 # This file is responsible for signing , encoding , decoding and returning JWTS
 import time
 from typing import Dict
-
 import jwt
 
 
@@ -20,7 +19,7 @@ def token_response(token: str):
 def signJWT(user_id: str) -> Dict[str, str]:
     payload = {
         "user_id": user_id,
-        "expires": time.time() + 600000
+        "expires": time.time() + 7.2e+6
     }
     token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 

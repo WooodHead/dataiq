@@ -23,18 +23,23 @@ from models import UserSchema, UserLoginSchema
 from auth.auth_bearer import JWTBearer
 from auth.auth_handler import signJWT
 from urllib.parse import urlparse
-
+from os import getenv
 
 templates = Jinja2Templates(directory="./templates")
 
 app = FastAPI()
-app.add_middleware(SessionMiddleware, secret_key="!secret")
 app.mount("/js", StaticFiles(directory="./templates/js/"), name="js")
-
-
+app.add_middleware(SessionMiddleware, secret_key="!secret123;;//")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+CONF_URL = 'https://accounts.google.com/.well-known/openid-configuration'
 config = Config()
 oauth = OAuth(config)
-CONF_URL = 'https://accounts.google.com/.well-known/openid-configuration'
 oauth.register(
     name='google',
     server_metadata_url=CONF_URL,
@@ -43,18 +48,7 @@ oauth.register(
     }
 )
 
-origins = ["*"]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 startup_vars = {}
-
 @app.on_event("startup")
 async def on_startup():
     startup_vars["db"] = MongoDb()
@@ -90,7 +84,7 @@ async def login(request: Request):
         if not db:
             # TODO: implement logger mechanism
             print(colored("Mongo Client not initialized", "red"))
-        else: 
+        else:
             if not db.check_record_exists(email, collection_name = "user_data"):
                 operation_flag = db.update_record(
                     data = {
@@ -100,7 +94,7 @@ async def login(request: Request):
         if email:
             resp.set_cookie(key="access_token", value=signJWT(email), domain=request.client.host)
     return resp
-    
+
 
 
 @app.get('/auth')
@@ -114,7 +108,7 @@ async def auth(request: Request, response: Response):
     if user:
         request.session['user'] = dict(user)
     return RedirectResponse(url='/')
-    
+
 
 
 @app.get('/logout')
@@ -134,7 +128,7 @@ async def save_user_data(request: Request):
         )
         return {
             "error": True
-        } 
+        }
     operation_flag = db.update_record(
         data = user_data,
         collection_name = "user_data"
@@ -151,5 +145,3 @@ async def save_user_data(request: Request):
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host='127.0.0.1', port=8000, reload=True)
-
-    

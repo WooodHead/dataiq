@@ -1,0 +1,6 @@
+fastapi[all]
+pymongo
+PyJWT
+Authlib
+httpx
+termcolor
