@@ -49,15 +49,19 @@ oauth.register(
 )
 
 startup_vars = {}
+
+
 @app.on_event("startup")
 async def on_startup():
     startup_vars["db"] = MongoDb()
+
 
 @app.on_event("shutdown")
 async def on_shutdown():
     client = startup_vars.get("db", None)
     if client:
         client.close()
+
 
 @app.get('/')
 def index(request: Request):
@@ -68,8 +72,10 @@ def index(request: Request):
     if user:
         name = user.get("given_name")
         context_dict["name"] = name.upper() if name else None
+    else:
+        # else part means use is logout
+        resp.set_cookie(key="access_token", value=None,domain=request.client.host)
     return templates.TemplateResponse("index.html", context=context_dict)
-
 
 
 @app.get('/login')
@@ -85,16 +91,20 @@ async def login(request: Request):
             # TODO: implement logger mechanism
             print(colored("Mongo Client not initialized", "red"))
         else:
-            if not db.check_record_exists(email, collection_name = "user_data"):
+            if not db.check_record_exists(email, collection_name="user_data"):
                 operation_flag = db.update_record(
-                    data = {
+                    data={
                         "email": email,
                         "info": user
-                        }, collection_name = "user_data")
+                    }, collection_name="user_data")
         if email:
-            resp.set_cookie(key="access_token", value=signJWT(email), domain=request.client.host)
-    return resp
+            print("request.client.host ", request.client.host, "email ", email)
+            acc_token = signJWT(email).get("access_token", None)
+            if acc_token:
+                resp.set_cookie(key="access_token", value=signJWT(
+                    email), domain=request.client.host)
 
+    return resp
 
 
 @app.get('/auth')
@@ -110,11 +120,11 @@ async def auth(request: Request, response: Response):
     return RedirectResponse(url='/')
 
 
-
 @app.get('/logout')
 async def logout(request: Request):
     request.session.pop('user', None)
     return RedirectResponse(url='/')
+
 
 @app.post("/save_user_data", dependencies=[Depends(JWTBearer())])
 async def save_user_data(request: Request):
@@ -130,8 +140,8 @@ async def save_user_data(request: Request):
             "error": True
         }
     operation_flag = db.update_record(
-        data = user_data,
-        collection_name = "user_data"
+        data=user_data,
+        collection_name="user_data"
     )
     if not operation_flag:
         return {
@@ -140,7 +150,6 @@ async def save_user_data(request: Request):
     return {
         "error": False
     }
-
 
 
 if __name__ == "__main__":
