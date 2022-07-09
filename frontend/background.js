@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://127.0.0.1:8000"
+const API_BASE_URL = "http://127.0.0.1:8000";
 let msg_and_function_map = {
   mode: {
     reward: on_click_reward_mode,
@@ -34,6 +34,28 @@ function get_access_token() {
     }
   });
 }
+function get_email_from_cookie() {
+  return new Promise((resolve, reject) => {
+    chrome.cookies.get(
+      {
+        url: API_BASE_URL,
+        name: "email",
+      },
+      function (cookie) {
+        if (cookie) {
+          email = cookie.value;
+          if(email) {
+            resolve(email);
+          } else {
+            reject("email not present")
+          }
+        } else {
+          reject("email not present");
+        }
+      }
+    );
+  });
+}
 function clean_up_data_from_local_storage() {
   store_data("search_term_array", [], false);
   store_data("visited_href", [], false);
@@ -51,18 +73,17 @@ function save_data_in_database() {
   /*
         retrieve user_seach_data and visited href and save into the database
     */
-  
-  function inner_func(acc_token) {
-    const keys_to_check = ["email", "search_term_array", "visited_href"];
+
+  function inner_func(email, acc_token) {
+    const keys_to_check = ["search_term_array", "visited_href"];
+
     chrome.storage.sync.get(keys_to_check, function (resp) {
-      console.log("RESP -- ", resp);
       const user_search_terms = resp["search_term_array"]
         ? resp["search_term_array"]
         : [];
       const user_visited_hrefs = resp["visited_href"]
         ? resp["visited_href"]
         : [];
-      const email = resp["email"] ? resp["email"] : null;
       if (!user_search_terms.length || !user_visited_hrefs.length) {
         return;
       }
@@ -78,16 +99,15 @@ function save_data_in_database() {
             const rawResponse = await fetch(`${API_BASE_URL}/save_user_data/`, {
               method: "POST",
               headers: {
-                "Accept": "application/json",
+                Accept: "application/json",
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${acc_token}`
+                Authorization: `Bearer ${acc_token}`,
               },
               body: JSON.stringify(obj_to_save),
             });
             const content = await rawResponse.json();
           } catch (err) {
             throw "error in saving";
-            
           }
         })();
       } else {
@@ -97,11 +117,14 @@ function save_data_in_database() {
   }
   get_access_token()
     .then((acc_token) => {
-      console.log(11);
-      inner_func(acc_token);
+      get_email_from_cookie().then(email=>{
+        inner_func(email, acc_token);
+      }).catch(err=>{
+        throw err;
+      });
     })
     .catch((err) => {
-      console.log(22);
+      
       throw err;
     });
 }
@@ -125,15 +148,14 @@ function store_data(key, value, is_array) {
             throw_last_chrome_error();
           });
           if (user_data && user_data.length >= 1) {
-            try{
+            try {
               save_data_in_database();
-              console.log("save_data_in_database -- done")
-            } catch(err) {
-                console.error("unable to save data in database");
+              console.log("save_data_in_database -- done");
+            } catch (err) {
+              console.error("unable to save data in database");
             } finally {
               // clean_up_data_from_local_storage();
             }
-            
           }
         }
       } else {
@@ -153,7 +175,6 @@ function on_click_reward_mode() {
 }
 function on_click_privacy_mode() {
   store_data("mode", "privacy", false);
-  
 }
 
 chrome.storage.sync.get(["mode"], function (result) {
