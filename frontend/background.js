@@ -51,6 +51,7 @@ function save_data_in_database() {
   /*
         retrieve user_seach_data and visited href and save into the database
     */
+  
   function inner_func(acc_token) {
     const keys_to_check = ["email", "search_term_array", "visited_href"];
     chrome.storage.sync.get(keys_to_check, function (resp) {
@@ -84,7 +85,8 @@ function save_data_in_database() {
             });
             const content = await rawResponse.json();
           } catch (err) {
-            console.log(err);
+            throw "error in saving";
+            
           }
         })();
       } else {
@@ -97,7 +99,7 @@ function save_data_in_database() {
       inner_func(acc_token);
     })
     .catch((err) => {
-      console.error("Access token is blank");
+      throw err;
     });
 }
 function store_data(key, value, is_array) {
@@ -119,9 +121,15 @@ function store_data(key, value, is_array) {
             // if there is an error then throw an error
             throw_last_chrome_error();
           });
-          if (user_data && user_data.length >= 50) {
-            save_data_in_database();
-            clean_up_data_from_local_storage();
+          if (user_data && user_data.length >= 1) {
+            try{
+              save_data_in_database();
+            } catch(err) {
+                console.error("unable to save data in database");
+            } finally {
+              clean_up_data_from_local_storage();
+            }
+            
           }
         }
       } else {
@@ -140,7 +148,7 @@ function on_click_reward_mode() {
 }
 function on_click_privacy_mode() {
   store_data("mode", "privacy", false);
-  console.log("in privacy");
+  
 }
 
 chrome.storage.sync.get(["mode"], function (result) {
