@@ -164,9 +164,28 @@ async def save_user_data(request: Request):
     }
 
 
-@app.post("/calculate_point/", dependencies=[Depends(JWTBearer())])
-async def calculate_point(sum_: int):
-    pass
+@app.get("/calculate_points/", dependencies=[Depends(JWTBearer())])
+async def calculate_points():
+    data = await request.json()
+    if not isinstance(data, dict) or not user_data.get("email", None):
+        return {
+            "error": True,
+            "message": "Incorrect data format"
+        }
+    db = startup_vars.get("db", None)
+    if not db:
+        print(colored("Mongo Client not initialized", "red"))
+        return {"error": True}
+    ret_val = db.get_length_of_search_term_visited_href(data, "user_data")
+    resp = {}
+    if not ret_val["error"]:
+        import math
+        resp["error"] = False
+        resp["points"] = (ret_val.get("sum", 0) + data.get("sum", 0))/100.0
+        resp["points"] = math.round(resp["points"])
+        return resp
+    resp["error"] = True
+    return resp
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host='127.0.0.1', port=8000, reload=True)
