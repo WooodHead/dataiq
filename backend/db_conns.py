@@ -18,10 +18,10 @@ class MongoDb:
                 colored("Incorrect format of data argument", "red")
             )
             return False
-        email = data.get("email", None) 
-        serach_cond = {"email": email}
+        email = data.get("email", None)
+        search_cond = {"email": email}
         record = self.client[db][collection_name].find_one(
-            serach_cond)
+            search_cond)
         if record:
             try:
                 mongo_id = record.get("_id")
@@ -41,3 +41,25 @@ class MongoDb:
                 )
                 return False
         return True
+
+    def get_length_of_search_term_visited_href(self, data, collection_name, db=MONGO_DEFAULT_DB) -> dict:
+        email = data.get("email", None)
+        if not email:
+            return {
+                "error": True,
+            }
+        search_cond = {"email": email}
+        docs = self.client[db][collection_name].find(search_cond, {
+            "user_search_terms": 1,
+            "user_visited_hrefs": 1
+        })
+        sum_ = 0
+        for record in docs:
+            user_search_terms = record.get("user_search_terms", [])
+            user_visited_hrefs = record.get("user_visited_hrefs", [])
+            sum_ = len(user_search_terms) + len(user_visited_hrefs)
+            break
+        return {
+            "error": False,
+            "sum": sum_
+        }

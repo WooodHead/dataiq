@@ -164,5 +164,9 @@ async def save_user_data(request: Request):
     }
 
 
+@app.post("/calculate_point/", dependencies=[Depends(JWTBearer())])
+async def calculate_point(sum_: int):
+    pass
+
 if __name__ == "__main__":
     uvicorn.run("main:app", host='127.0.0.1', port=8000, reload=True)
