@@ -6,8 +6,48 @@ let msg_and_function_map = {
   },
   action: {
     "clean-up-data": clean_up_data_from_local_storage,
+    "calculate_points": calculate_points
   },
 };
+function calculate_points(callback) {
+  chrome.storage.sync.get(['search_term_array', 'visited_href'], function(resp){
+    let points=0;
+    points = resp["search_term_array"] ? resp["search_term_array"].length : 0; 
+    points += resp["visited_href"] ? resp["visited_href"].length : 0; 
+    get_access_token().then(acc_token => {
+      get_email_from_cookie().then(email => {
+        const params = {
+          "email": email,
+          "sum": points
+        };
+        (async () => {
+          try {
+            const rawResponse = await fetch(`${API_BASE_URL}/calculate_points`, {
+              method: "POST",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${acc_token}`,
+              },
+              body: JSON.stringify(params),
+            });
+            const content = await rawResponse.json();
+            if(!content["error"]){
+              points = content["points"]
+              callback({"points": points})
+            }
+          } catch (err) {
+              throw err;
+          }
+        })();
+      }).catch(err => {
+        throw err;
+      });
+    }).catch(error => {
+      throw error
+    });
+  });
+}
 function get_access_token() {
   return new Promise((resolve, reject) => {
     try {
@@ -65,7 +105,7 @@ function get_email_from_cookie() {
     );
   });
 }
-function clean_up_data_from_local_storage() {
+function clean_up_data_from_local_storage(callback=null) {
   store_data("search_term_array", [], false);
   store_data("visited_href", [], false);
   console.log("clean_up_data_from_local_storage done!!");
@@ -97,7 +137,6 @@ function save_data_in_database() {
         return;
       }
       if (email) {
-        const API_BASE_URL = "http://127.0.0.1:8000";
         let obj_to_save = {
           email: email,
           user_search_terms: user_search_terms,
@@ -207,7 +246,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   } else if (msg["action"]) {
     let action = msg["action"];
     if (action) {
-      msg_and_function_map["action"][action]();
+      msg_and_function_map["action"][action](sendResponse);
     }
   }
   return true;

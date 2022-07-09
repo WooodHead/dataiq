@@ -80,13 +80,19 @@ function calc_points() {
         document.getElementById("points_h2").innerText = `Points: ${Math.round(points)}`;
         document.getElementById("points_h2").style.display="block"
     }
-    chrome.storage.sync.get(['search_term_array', 'visited_href'], function(resp){
+    chrome.runtime.sendMessage({"action": "calculate_points"}, response=>{
+        if(response) {
+            if("points" in response) {
+                update_points_in_html(response["points"]);
+            }
+        }
+    });
+    /*chrome.storage.sync.get(['search_term_array', 'visited_href'], function(resp){
         let points=0;
         points = resp["search_term_array"] ? resp["search_term_array"].length : 0; 
         points += resp["visited_href"] ? resp["visited_href"].length : 0; 
-        points /= 100;
-        update_points_in_html(points);
-    });
+        // update_points_in_html(points);
+    });*/ 
 }
 function on_click_preferences(){
     window.open("./preferences.html");

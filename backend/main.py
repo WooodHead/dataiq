@@ -165,9 +165,9 @@ async def save_user_data(request: Request):
 
 
 @app.post("/calculate_points", dependencies=[Depends(JWTBearer())])
-async def calculate_points():
+async def calculate_points(request: Request):
     data = await request.json()
-    if not isinstance(data, dict) or not user_data.get("email", None):
+    if not isinstance(data, dict) or not data.get("email", None):
         return {
             "error": True,
             "message": "Incorrect data format"
@@ -179,10 +179,9 @@ async def calculate_points():
     ret_val = db.get_length_of_search_term_visited_href(data, "user_data")
     resp = {}
     if not ret_val["error"]:
-        import math
         resp["error"] = False
         resp["points"] = (ret_val.get("sum", 0) + data.get("sum", 0))/100.0
-        resp["points"] = math.round(resp["points"])
+        resp["points"] = round(resp["points"])
         return resp
     resp["error"] = True
     resp["message"] = "unable to calculate points"
