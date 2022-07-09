@@ -108,12 +108,6 @@ def index(request: Request):
     }
     resp = templates.TemplateResponse("index.html", context=context_dict)
     return resp
-    """
-    user = request.session.get("user", None)
-    if user:
-        name = user.get("given_name")
-        context_dict["name"] = name.upper() if name else None
-    """
 
 
 @app.get('/login')
@@ -132,10 +126,6 @@ async def auth(request: Request, response: Response):
     if user:
         request.session['user'] = dict(user)
     resp = RedirectResponse(url='/')
-    from termcolor import colored
-    print(
-        colored("calling store_and_generate_jwt", "red")
-    )
     store_and_generate_jwt(request, resp)
     return resp
 
