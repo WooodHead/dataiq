@@ -52,7 +52,6 @@ function save_data_in_database() {
         retrieve user_seach_data and visited href and save into the database
     */
   function inner_func(acc_token) {
-    console.log("ACC Func ACC Token ", acc_token);
     const keys_to_check = ["email", "search_term_array", "visited_href"];
     chrome.storage.sync.get(keys_to_check, function (resp) {
       const user_search_terms = resp["search_term_array"]
@@ -84,7 +83,6 @@ function save_data_in_database() {
               body: JSON.stringify(obj_to_save),
             });
             const content = await rawResponse.json();
-            console.log(content);
           } catch (err) {
             console.log(err);
           }
@@ -121,9 +119,9 @@ function store_data(key, value, is_array) {
             // if there is an error then throw an error
             throw_last_chrome_error();
           });
-          if (user_data && user_data.length >= 1) {
+          if (user_data && user_data.length >= 50) {
             save_data_in_database();
-            // clean_up_data_from_local_storage();
+            clean_up_data_from_local_storage();
           }
         }
       } else {
