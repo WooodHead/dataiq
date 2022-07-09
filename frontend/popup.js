@@ -55,18 +55,6 @@ function login() {
 }
 function logout() {
     window.open(`${API_BASE_URL}/logout`)
-    
-    /*chrome.runtime.sendMessage({"action": "logout"}, response=>{
-        if(chrome.runtime.lastError){
-            alert("Error")
-        } else {
-            if(!response["error"]) {
-                document.getElementById("email_id_p").innerText = "";
-                btn_login.style = "block";
-            }
-        }
-        
-    })*/
 }
 function get_user_info() {
     chrome.cookies.get(
@@ -167,8 +155,8 @@ window.onload = function() {
         }, function(cookie){
             if(cookie) {
                 access_token = cookie.value;
-                console.log(access_token, typeof access_token);
                 if(access_token) {
+                    
                     get_user_info(); 
                     calc_points();                    
                 } else {
