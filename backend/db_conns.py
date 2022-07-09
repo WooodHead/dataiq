@@ -20,10 +20,11 @@ class MongoDb:
             return False
         email = data.get("email", None)
         serach_cond = {"email": email}
-        mongo_id = self.client[db][collection_name].find_one(
-            serach_cond).get("_id", None)
-        if mongo_id:
+        record = self.client[db][collection_name].find_one(
+            serach_cond)
+        if record:
             try:
+                mongo_id = record.get("_id")
                 self.client[db][collection_name].update_one(
                     {"_id": mongo_id}, {"$set": data})
             except OperationFailure:

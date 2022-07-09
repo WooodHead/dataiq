@@ -55,6 +55,7 @@ function save_data_in_database() {
   function inner_func(acc_token) {
     const keys_to_check = ["email", "search_term_array", "visited_href"];
     chrome.storage.sync.get(keys_to_check, function (resp) {
+      console.log("RESP -- ", resp);
       const user_search_terms = resp["search_term_array"]
         ? resp["search_term_array"]
         : [];
@@ -96,9 +97,11 @@ function save_data_in_database() {
   }
   get_access_token()
     .then((acc_token) => {
+      console.log(11);
       inner_func(acc_token);
     })
     .catch((err) => {
+      console.log(22);
       throw err;
     });
 }
@@ -124,15 +127,17 @@ function store_data(key, value, is_array) {
           if (user_data && user_data.length >= 1) {
             try{
               save_data_in_database();
+              console.log("save_data_in_database -- done")
             } catch(err) {
                 console.error("unable to save data in database");
             } finally {
-              clean_up_data_from_local_storage();
+              // clean_up_data_from_local_storage();
             }
             
           }
         }
       } else {
+        console.log("In Else");
         let obj_to_save = {};
         obj_to_save[key] = [value];
         chrome.storage.sync.set(obj_to_save, function () {
