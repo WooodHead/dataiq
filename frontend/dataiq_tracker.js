@@ -13,12 +13,21 @@ $(document).ready(function() {
     if(position>=0){
         const params = new URLSearchParams(new URL(current_url).search) 
         const user_search_term = params.get("q")
+        if(!user_search_term){
+            return
+        }
         chrome.runtime.sendMessage({
             "type":"store_search_term", 
             "key": "search_term_array",
             "value": user_search_term
         });        
     } else {
+        if(!current_url){
+            return
+        }
+        if(current_url.includes("http://127.0.0.1:8000")) {
+            return
+        }
         chrome.runtime.sendMessage({
             "type":"store_search_term",
             "key": "visited_href",

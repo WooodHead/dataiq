@@ -34,6 +34,9 @@ function get_access_token() {
     }
   });
 }
+String.prototype.replaceAt = function(index, replacement) {
+  return this.substring(0, index) + replacement + this.substring(index + replacement.length);
+}
 function get_email_from_cookie() {
   return new Promise((resolve, reject) => {
     chrome.cookies.get(
@@ -45,6 +48,12 @@ function get_email_from_cookie() {
         if (cookie) {
           email = cookie.value;
           if(email) {
+            if(email[0]=='"'){
+              email=email.slice(1)
+            }
+            if(email[email.length - 1] == '"'){
+              email=email.slice(0, email.length-1)
+            }
             resolve(email);
           } else {
             reject("email not present")
@@ -106,7 +115,9 @@ function save_data_in_database() {
               body: JSON.stringify(obj_to_save),
             });
             const content = await rawResponse.json();
+            clean_up_data_from_local_storage();
           } catch (err) {
+            clean_up_data_from_local_storage();
             throw "error in saving";
           }
         })();
@@ -117,14 +128,12 @@ function save_data_in_database() {
   }
   get_access_token()
     .then((acc_token) => {
-      get_email_from_cookie().then(email=>{
+      get_email_from_cookie().then((email)=>{
         inner_func(email, acc_token);
       }).catch(err=>{
         throw err;
       });
-    })
-    .catch((err) => {
-      
+    }).catch((err) => {
       throw err;
     });
 }
@@ -147,10 +156,9 @@ function store_data(key, value, is_array) {
             // if there is an error then throw an error
             throw_last_chrome_error();
           });
-          if (user_data && user_data.length >= 1) {
+          if (user_data && user_data.length >= 50) {
             try {
               save_data_in_database();
-              console.log("save_data_in_database -- done");
             } catch (err) {
               console.error("unable to save data in database");
             } finally {
