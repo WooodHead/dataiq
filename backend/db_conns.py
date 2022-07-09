@@ -18,7 +18,7 @@ class MongoDb:
                 colored("Incorrect format of data argument", "red")
             )
             return False
-        email = data.get("email", None)
+        email = data.get("email", None) 
         serach_cond = {"email": email}
         record = self.client[db][collection_name].find_one(
             serach_cond)
