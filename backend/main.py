@@ -51,11 +51,36 @@ oauth.register(
 startup_vars = {}
 
 
-def set_unset_cookies(resp, set_flag, acc_token=None, user=None):
+def store_and_generate_jwt(request, resp):
+    user = request.session.get("user", None)
+    if not user:
+        return
+    if user:
+        email = user.get("email")
+        db = startup_vars.get("db", None)
+        if not db:
+            # TODO: implement logger mechanism
+            print(colored("Mongo Client not initialized", "red"))
+        else:
+            if not db.check_record_exists(email, collection_name="user_data"):
+                operation_flag = db.update_record(
+                    data={
+                        "email": email,
+                        "info": user
+                    }, collection_name="user_data")
+        if email:
+            acc_token = signJWT(email).get("access_token", None)
+            if acc_token:
+                set_unset_cookies(request, resp=resp,
+                                  set_flag=True, acc_token=acc_token, user=user)
+
+
+def set_unset_cookies(request, resp, set_flag, acc_token=None, user=None):
     if set_flag:
         resp.set_cookie(key="access_token", value=acc_token,
                         domain=request.client.host)
         name = user.get("given_name", None)
+        email = user.get("email", None)
         resp.set_cookie(key="name", value=name, domain=request.client.host)
         resp.set_cookie(key="email", value=email, domain=request.client.host)
     else:
@@ -82,41 +107,20 @@ def index(request: Request):
     context_dict = {
         "request": request,
     }
+    resp = templates.TemplateResponse("index.html", context=context_dict)
+    return resp
+    """
     user = request.session.get("user", None)
     if user:
         name = user.get("given_name")
         context_dict["name"] = name.upper() if name else None
-    else:
-        set_unset_cookies(resp=resp, set_flag=False, acc_token=None, user=None)
-    return templates.TemplateResponse("index.html", context=context_dict)
+    """
 
 
 @app.get('/login')
 async def login(request: Request):
     redirect_uri = request.url_for('auth')
-    resp = await oauth.google.authorize_redirect(request, redirect_uri)
-    # acc_token = request.session.get("user", {}).get("access_token")
-    user = request.session.get("user", None)
-    if user:
-        email = user.pop("email")
-        db = startup_vars.get("db", None)
-        if not db:
-            # TODO: implement logger mechanism
-            print(colored("Mongo Client not initialized", "red"))
-        else:
-            if not db.check_record_exists(email, collection_name="user_data"):
-                operation_flag = db.update_record(
-                    data={
-                        "email": email,
-                        "info": user
-                    }, collection_name="user_data")
-        if email:
-            acc_token = signJWT(email).get("access_token", None)
-            if acc_token:
-                set_unset_cookies(resp=resp, set_flag=True,
-                                  acc_token=acc_token, user=user)
-
-    return resp
+    return await oauth.google.authorize_redirect(request, redirect_uri)
 
 
 @app.get('/auth')
@@ -126,16 +130,23 @@ async def auth(request: Request, response: Response):
     except OAuthError as error:
         return HTMLResponse(f'<h1>{error.error}</h1>')
     user = token.get('userinfo')
-    # user["access_token"] = token.get("access_token")
     if user:
         request.session['user'] = dict(user)
-    return RedirectResponse(url='/')
+    resp = RedirectResponse(url='/')
+    from termcolor import colored
+    print(
+        colored("calling store_and_generate_jwt", "red")
+    )
+    store_and_generate_jwt(request, resp)
+    return resp
 
 
 @app.get('/logout')
 async def logout(request: Request):
     request.session.pop('user', None)
-    return RedirectResponse(url='/')
+    resp = RedirectResponse(url='/')
+    set_unset_cookies(request, resp, False, acc_token=None, user=None)
+    return resp
 
 
 @app.post("/save_user_data", dependencies=[Depends(JWTBearer())])
