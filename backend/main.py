@@ -84,10 +84,18 @@ def set_unset_cookies(request, resp, set_flag, acc_token=None, user=None):
         resp.set_cookie(key="name", value=name, domain=request.client.host)
         resp.set_cookie(key="email", value=email, domain=request.client.host)
     else:
+        """
         resp.set_cookie(key="access_token", value=None,
                         domain=request.client.host)
         resp.set_cookie(key="name", value=None, domain=request.client.host)
         resp.set_cookie(key="email", value=None, domain=request.client.host)
+        """
+        # cookies_todelete = ["access_token", "name", "email"]
+        resp.delete_cookie("access_token", domain=request.client.host)
+        resp.delete_cookie("email", domain=request.client.host)
+        resp.delete_cookie("name", domain=request.client.host)
+
+        print("cookie deleted!")
 
 
 @app.on_event("startup")
@@ -143,9 +151,9 @@ async def auth(request: Request, response: Response):
 
 @app.get('/logout')
 async def logout(request: Request):
-    request.session.pop('user', None)
     resp = RedirectResponse(url='/')
     set_unset_cookies(request, resp, False, acc_token=None, user=None)
+    request.session.pop('user', None)
     return resp
 
 

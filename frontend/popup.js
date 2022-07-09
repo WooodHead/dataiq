@@ -51,10 +51,12 @@ function toggle_enable_dataiq_button(){
     */
 }
 function login() {
-    window.open(API_BASE_URL);
+    window.open(`${API_BASE_URL}/login`);
 }
 function logout() {
-    chrome.runtime.sendMessage({"action": "logout"}, response=>{
+    window.open(`${API_BASE_URL}/logout`)
+    
+    /*chrome.runtime.sendMessage({"action": "logout"}, response=>{
         if(chrome.runtime.lastError){
             alert("Error")
         } else {
@@ -64,7 +66,7 @@ function logout() {
             }
         }
         
-    })
+    })*/
 }
 function get_user_info() {
     chrome.cookies.get(
@@ -165,8 +167,20 @@ window.onload = function() {
         }, function(cookie){
             if(cookie) {
                 access_token = cookie.value;
-                get_user_info(); 
-                calc_points();
+                console.log(access_token, typeof access_token);
+                if(access_token) {
+                    get_user_info(); 
+                    calc_points();                    
+                } else {
+                    // access token blank need to login
+                    // need to login
+                    btn_login.style.display="block";
+                }
+
+            } else {
+                btn_login.style.display="block";
+                
+                
             }
             
         });    
