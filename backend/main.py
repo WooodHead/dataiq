@@ -164,7 +164,7 @@ async def save_user_data(request: Request):
     }
 
 
-@app.get("/calculate_points/", dependencies=[Depends(JWTBearer())])
+@app.post("/calculate_points", dependencies=[Depends(JWTBearer())])
 async def calculate_points():
     data = await request.json()
     if not isinstance(data, dict) or not user_data.get("email", None):
