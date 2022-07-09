@@ -175,7 +175,7 @@ async def calculate_points():
     db = startup_vars.get("db", None)
     if not db:
         print(colored("Mongo Client not initialized", "red"))
-        return {"error": True}
+        return {"error": True, "message": "Mongo Client not initialized"}
     ret_val = db.get_length_of_search_term_visited_href(data, "user_data")
     resp = {}
     if not ret_val["error"]:
@@ -185,6 +185,7 @@ async def calculate_points():
         resp["points"] = math.round(resp["points"])
         return resp
     resp["error"] = True
+    resp["message"] = "unable to calculate points"
     return resp
 
 if __name__ == "__main__":
