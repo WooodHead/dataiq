@@ -159,6 +159,7 @@ window.onload = function() {
             "url": API_BASE_URL,
             "name": "access_token"
         }, function(cookie){
+            console.log("cookie ", cookie);
             if(cookie) {
                 access_token = cookie.value;
                 if(access_token) {

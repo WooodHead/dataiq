@@ -24,6 +24,7 @@ from auth.auth_bearer import JWTBearer
 from auth.auth_handler import signJWT
 from urllib.parse import urlparse
 from os import getenv
+from datetime import datetime, timedelta
 
 templates = Jinja2Templates(directory="./templates")
 
@@ -77,12 +78,22 @@ def store_and_generate_jwt(request, resp):
 
 def set_unset_cookies(request, resp, set_flag, acc_token=None, user=None):
     if set_flag:
-        resp.set_cookie(key="access_token", value=acc_token,
-                        domain=request.client.host)
         name = user.get("given_name", None)
         email = user.get("email", None)
-        resp.set_cookie(key="name", value=name, domain=request.client.host)
-        resp.set_cookie(key="email", value=email, domain=request.client.host)
+        max_age = 365*24*60*60
+        expires = datetime.now() + timedelta(seconds=max_age)
+        resp.set_cookie(key="access_token", value=acc_token,
+                        max_age=max_age, expires=expires,
+                        secure=True, httponly=True,
+                        domain=request.client.host)
+        resp.set_cookie(key="name", value=name,
+                        max_age=max_age, expires=expires,
+                        secure=True, httponly=True,
+                        domain=request.client.host)
+        resp.set_cookie(key="email", value=email,
+                        max_age=max_age, expires=expires,
+                        secure=True, httponly=True,
+                        domain=request.client.host)
     else:
         resp.delete_cookie("access_token", domain=request.client.host)
         resp.delete_cookie("email", domain=request.client.host)
