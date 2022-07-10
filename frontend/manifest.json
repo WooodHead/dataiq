@@ -5,9 +5,7 @@
     "manifest_version":3,
     "incognito":"split",
     "icons":{
-      "16": "./logo/Logo.png",
-      "48": "./logo/Logo.png",
-      "128": "./logo/Logo.png"
+      "16": "./Logo.png"
     },
     "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmHIYBbg1q3VyJInXsmaM+6jeiMz634WfD4D16SdVxIwOy7t2T/0MEmjYvwYhTllLsZwbFrI/9R++ybM6zaSWGT0eRjRPKLlqGq0s2YeR0jUYhQMA5Kq/ZX/gFLUh95o5HCBo4rErYG+iIG6avwHhB6keke4WuL5Kn42HjR9uVN1a9WszZDIjMVqowA9oqCJAAUAP6ACX7ZZsyriukDsk/myvkb7EepFHH+zZCqu2UbG2djz0G3pDM+FHPoEXAxN74aiwAFGbxvYa3bJevHFQx3Bhgx+hOsuNxPZHFT2YOH6h3yvzm0i8Q8c6kHlgZ7xfoY140GVsDkh4zYcD9y/6gwIDAQAB",
     "background":{
