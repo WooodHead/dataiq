@@ -191,7 +191,7 @@ async def calculate_points(request: Request):
     resp = {}
     if not ret_val["error"]:
         resp["error"] = False
-        resp["points"] = (ret_val.get("sum", 0) + data.get("sum", 0))/100.0
+        resp["points"] = (ret_val.get("sum", 0) + data.get("sum", 0))/10.0
         resp["points"] = round(resp["points"])
         return resp
     resp["error"] = True
