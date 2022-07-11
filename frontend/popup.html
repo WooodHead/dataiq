@@ -26,101 +26,118 @@
     />
   </head>
   <body>
-    <div class="row mt-2">
-      <div class="col-4 text-center">
-        <h2 class="text-primary">Data IQ</h2>
+    <div class="container">
+      <div class="row mt-2">
+        <div class="col-4 text-center">
+          <h2 class="text-primary">Data IQ</h2>
+        </div>
+        <div class="col-8 text-center">
+          <div class="btn-group" role="group">
+            <button type="button" class="btn btn-primary" id="reward-btn">
+              Reward
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              id="privacy-btn"
+            >
+              Privacy
+            </button>
+          </div>
+        </div>
       </div>
-      <div class="col-8 text-center">
-        <div class="btn-group" role="group">
-          <button type="button" class="btn btn-primary" id="reward-btn">
-            Reward
-          </button>
+      <hr />
+      <div class="row text-center mt-2" id="points_row">
+        <div class="col">
+          <h2 class="text-primary" id="points_h2"></h2>
+        </div>
+      </div>
+      <hr />
+      <div class="row mt-2 text-center" style="display: none">
+        <div class="col">
           <button
             type="button"
-            class="btn btn-outline-primary"
-            id="privacy-btn"
+            class="btn btn-primary btn-lg btn-block"
+            id="btn-enable-dataiq"
           >
-            Privacy
+            Enable Data IQ on this site
+          </button>
+        </div>
+        <hr />
+      </div>
+      <div class="row mt-2 text-center">
+        <div class="row">
+          <div class="col" style="display: none">
+            <button type="button" class="btn btn-primary" id="btn-preferences">
+              <i class="fa fa-cog" aria-hidden="true"></i>
+              Preferences
+            </button>
+          </div>
+          <div class="col">
+            <button class="btn btn-primary" id="btn-marketplace">
+              <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+              Marketplace
+            </button>
+          </div>
+        </div>
+      </div>
+      <hr />
+      <div class="row mt-2 text-center">
+        <div class="col"></div>
+        <div class="col">
+          <button class="btn btn-outline-primary" id="btn-login">Login</button>
+        </div>
+        <div class="col"></div>
+      </div>
+      <div class="row mt-2 text-center">
+        <div class="col-12">
+          <h3 id="email_id_p" class="text-primary"></h3>
+        </div>
+      </div>
+      <hr />
+      <div class="row mt-2 text-center">
+        <div class="col" style="display: none">
+          <button class="btn btn-danger" id="btn-show-data">Show Data</button>
+        </div>
+        <div class="col text-center">
+          <button class="btn btn-outline-danger" id="btn-logout">Logout</button>
+        </div>
+        <div class="col" style="display: none">
+          <button class="btn btn-secondary" id="btn-clean-up-data">
+            Clean Up
           </button>
         </div>
       </div>
-    </div>
-    <hr />
-    <div class="row text-center mt-2" id="points_row">
-      <div class="col">
-        <h2 class="text-primary" id="points_h2"></h2>
+      <hr />
+      <div class="row">
+        <div class="col-12 text-center">
+          <div class="form-group">
+            <textarea
+              class="form-control"
+              id="suggestion_box"
+              placeholder="Any Suggestions ?"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <button class="btn btn-primary mt-2">Send</button>
+        </div>
       </div>
       <hr />
+      <div class="row text-center">
+        <div class="col">
+          <p
+            class="h4 text-primary text-uppercase"
+            style="font-family: 'Open Sans'"
+          >
+            Made with
+            <i class="fa-solid fa-heart text-danger"></i>
+            in India
+          </p>
+        </div>
+      </div>
     </div>
 
-    <div class="row mt-2 text-center" style="display: none">
-      <div class="col">
-        <button
-          type="button"
-          class="btn btn-primary btn-lg btn-block"
-          id="btn-enable-dataiq"
-        >
-          Enable Data IQ on this site
-        </button>
-      </div>
-      <hr />
-    </div>
-    <div class="row mt-2 text-center">
-      <div class="row">
-        <div class="col" style="display: none">
-          <button type="button" class="btn btn-primary" id="btn-preferences">
-            <i class="fa fa-cog" aria-hidden="true"></i>
-            Preferences
-          </button>
-        </div>
-        <div class="col">
-          <button class="btn btn-primary" id="btn-marketplace">
-            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-            Marketplace
-          </button>
-        </div>
-      </div>
-    </div>
-    <hr />
-    <div class="row mt-2 text-center">
-      <div class="col"></div>
-      <div class="col">
-        <button class="btn btn-outline-primary" id="btn-login">Login</button>
-      </div>
-      <div class="col"></div>
-    </div>
-    <div class="row mt-2 text-center">
-      <div class="col-12">
-        <h3 id="email_id_p" class="text-primary"></h3>
-      </div>
-    </div>
-    <hr />
-    <div class="row mt-2 text-center">
-      <div class="col" style="display: none">
-        <button class="btn btn-danger" id="btn-show-data">Show Data</button>
-      </div>
-      <div class="col text-center">
-        <button class="btn btn-outline-danger" id="btn-logout">Logout</button>
-      </div>
-      <div class="col" style="display: none">
-        <button class="btn btn-secondary" id="btn-clean-up-data">
-          Clean Up
-        </button>
-      </div>
-    </div>
-    <hr />
-    <div class="row text-center">
-      <div class="col">
-        <p
-          class="h4 text-primary text-uppercase"
-          style="font-family: 'Open Sans'"
-        >
-          Made with
-          <i class="fa-solid fa-heart text-danger"></i>
-          in India
-        </p>
-      </div>
-    </div>
     <script src="./popup.js"></script>
   </body>
 </html>
