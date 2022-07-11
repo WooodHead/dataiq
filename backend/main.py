@@ -31,7 +31,8 @@ templates = Jinja2Templates(directory="./templates")
 
 app = FastAPI()
 app.mount("/js", StaticFiles(directory="./templates/js/"), name="js")
-app.add_middleware(SessionMiddleware, secret_key="!secret123;;//")
+app.add_middleware(SessionMiddleware,
+                   secret_key="!secret123;;//", https_only=False)
 app.add_middleware(HTTPSRedirectMiddleware)
 app.add_middleware(
     CORSMiddleware,
