@@ -12,6 +12,7 @@ from fastapi.responses import JSONResponse
 from urllib.parse import urlparse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
 
 
 import json
@@ -31,6 +32,7 @@ templates = Jinja2Templates(directory="./templates")
 app = FastAPI()
 app.mount("/js", StaticFiles(directory="./templates/js/"), name="js")
 app.add_middleware(SessionMiddleware, secret_key="!secret123;;//")
+app.add_middleware(HTTPSRedirectMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -199,4 +201,7 @@ async def calculate_points(request: Request):
     return resp
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host='127.0.0.1', port=8000, reload=True)
+    uvicorn.run("main:app",
+                host='127.0.0.1', port=8000, reload=True,
+                ssl_keyfile="./key.pem", ssl_certfile="./cert.pem"
+                )
